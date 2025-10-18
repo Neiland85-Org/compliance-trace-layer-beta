@@ -11,4 +11,5 @@ app.use(express.json());
 app.use("/api/trace", traceRoutes);
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(\`Backend running on port \${PORT}\`));
+app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
+
