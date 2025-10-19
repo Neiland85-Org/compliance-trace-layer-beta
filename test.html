@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Frontend</title>
+</head>
+<body>
+    <h1>Test de Frontend</h1>
+    <p>Si puedes ver esto, el servidor está funcionando.</p>
+    <script>
+        fetch('http://localhost:4000/api/trace/verify/test')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Backend response:', data);
+                document.body.innerHTML += '<p>Backend conectado: ' + JSON.stringify(data) + '</p>';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.body.innerHTML += '<p>Error conectando al backend: ' + error + '</p>';
+            });
+    </script>
+</body>
+</html>

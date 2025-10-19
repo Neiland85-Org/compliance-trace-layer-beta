@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Simple</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        .test {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 TEST SIMPLE - FUNCIONANDO</h1>
+    <div class="test">
+        <p>Si puedes ver esto, el HTML básico funciona.</p>
+        <p>El problema debe estar en:</p>
+        <ul>
+            <li>React/JavaScript</li>
+            <li>Rutas de assets</li>
+            <li>Dependencias de Three.js</li>
+        </ul>
+    </div>
+    <div class="test">
+        <p>Backend: <span id="backend-status">Verificando...</span></p>
+        <p>Frontend: <span id="frontend-status">Verificando...</span></p>
+    </div>
+
+    <script>
+        // Test backend
+        fetch('http://localhost:4000/api/trace/verify/test')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('backend-status').textContent = '✅ Funcionando';
+                document.getElementById('backend-status').style.color = '#0f0';
+            })
+            .catch(error => {
+                document.getElementById('backend-status').textContent = '❌ Error: ' + error.message;
+                document.getElementById('backend-status').style.color = '#f00';
+            });
+
+        // Test frontend
+        document.getElementById('frontend-status').textContent = '✅ HTML cargado';
+        document.getElementById('frontend-status').style.color = '#0f0';
+    </script>
+</body>
+</html>
