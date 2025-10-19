@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import UIConsole from "./UIConsole";
 
 export default function Layout({ children }) {
   return (
@@ -15,6 +16,10 @@ export default function Layout({ children }) {
           Blockchain verification for environmental integrity.
         </p>
       </section>
+
+      {/* UI CONSOLE - MISSION CONTROL INTERFACE */}
+      <UIConsole />
+
       <main className="px-10">{children}</main>
       <footer className="mt-20 text-center text-xs text-[#B5C5C7] border-t border-white/10 py-6">
         © 2025 Compliance & Trace Layer • Prototype

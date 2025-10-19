@@ -1,82 +1,111 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Stars, Html } from "@react-three/drei";
-import { useState, useRef } from "react";
+import { OrbitControls, Stars } from "@react-three/drei";
+import { useState, useEffect, useRef, Suspense } from "react";
 import * as THREE from "three";
+import Planet from "./Planet";
+import TradeLink from './TradeLink';
+import GameHUD from './GameHUD';
 
-function Planet({ name, color, position, buttons, active, onClick }) {
-  const planetRef = useRef();
-  return (
-    <group position={position} onClick={onClick}>
-      <mesh ref={planetRef} scale={active ? 1.3 : 1}>
-        <sphereGeometry args={[1.5, 48, 48]} />
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={active ? 1.5 : 0.4}
-          roughness={0.4}
-          metalness={0.8}
-        />
-      </mesh>
-      {active && (
-        <Html center>
-          <div className="flex flex-col items-center gap-2 bg-black/70 p-4 rounded-2xl border border-[#00FFB2]/30 text-xs text-[#8DFD1B]">
-            <p className="orbit-font text-[#00E0FF] mb-2 font-bold">{name}</p>
-            {buttons.map((btn, i) => (
-              <button
-                key={i}
-                className="px-3 py-1 bg-[#00FFB2]/20 border border-[#00FFB2]/40 rounded hover:bg-[#00E0FF]/30 transition"
-              >
-                {btn}
-              </button>
-            ))}
-          </div>
-        </Html>
-      )}
-    </group>
-  );
-}
-
-export default function EarthScene() {
-  const [activePlanet, setActivePlanet] = useState(null);
+function CameraController() {
   const { camera } = useThree();
 
   useFrame(() => {
-    const targetZ = activePlanet ? 10 : 25;
+    const targetZ = 25;
     camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.05);
   });
 
+  return null;
+}
+
+export default function EarthScene() {
+  const [carbonIndex, setCarbonIndex] = useState(80);
+  const [starCount, setStarCount] = useState(8000);
+  const marsPositionRef = useRef([8, 2, 0]);
+  const titanPositionRef = useRef([-8, -2, 0]);
+
+  useEffect(() => {
+    const updateStarCount = () => {
+      setStarCount(window.innerWidth < 768 ? 2000 : 8000);
+    };
+    updateStarCount();
+    window.addEventListener('resize', updateStarCount);
+    return () => window.removeEventListener('resize', updateStarCount);
+  }, []);
+
+function OrbitalUpdater({ marsPositionRef, titanPositionRef }) {
+  useFrame((state) => {
+    const time = state.clock.elapsedTime;
+    // Mars orbit: radius 8, slow orbit
+    const marsX = Math.cos(time * 0.1) * 8;
+    const marsZ = Math.sin(time * 0.1) * 8;
+    marsPositionRef.current = [marsX, 2, marsZ];
+    
+    // Titan orbit: radius 10, slower orbit
+    const titanX = Math.cos(time * 0.05) * 10;
+    const titanZ = Math.sin(time * 0.05) * 10;
+    titanPositionRef.current = [titanX, -2, titanZ];
+  });
+
+  return null;
+}
+
   return (
-    <div className="h-[900px] bg-black/60 rounded-3xl border border-[#00E0FF]/30 overflow-hidden shadow-2xl">
+    <div className="relative h-[600px] md:h-[800px] xl:h-[900px] bg-black/60 rounded-3xl border border-[#00E0FF]/30 overflow-hidden shadow-2xl">
       <Canvas camera={{ position: [0, 0, 25], fov: 55 }}>
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[10, 10, 10]} intensity={1.2} />
-        <Stars radius={200} depth={100} count={8000} factor={4} fade speed={1} />
-        <Planet
-          name="Compliance Node"
-          color="#00E0FF"
-          position={[-8, 0, 0]}
-          active={activePlanet === "Compliance"}
-          onClick={() => setActivePlanet(activePlanet === "Compliance" ? null : "Compliance")}
-          buttons={["Validate", "KYC", "AML"]}
-        />
-        <Planet
-          name="Trade Node"
-          color="#8DFD1B"
-          position={[0, 5, 0]}
-          active={activePlanet === "Trade"}
-          onClick={() => setActivePlanet(activePlanet === "Trade" ? null : "Trade")}
-          buttons={["Transactions", "API", "Stream"]}
-        />
-        <Planet
-          name="Impact Node"
-          color="#FFB703"
-          position={[8, -2, 0]}
-          active={activePlanet === "Impact"}
-          onClick={() => setActivePlanet(activePlanet === "Impact" ? null : "Impact")}
-          buttons={["Reports", "Export", "Certify"]}
-        />
+        <fog attach="fog" args={["#000010", 0.02]} />
+        <CameraController />
+        <OrbitalUpdater marsPositionRef={marsPositionRef} titanPositionRef={titanPositionRef} />
+        <ambientLight intensity={0.3} color="#88aaff" />
+        <directionalLight position={[50, 0, 25]} intensity={2.0} color="#fff5cc" />
+        <Stars radius={200} depth={100} count={starCount} factor={4} fade speed={1} />
+        
+        <Suspense fallback={null}>
+          <Planet
+            name="Earth"
+            color="#00E0FF"
+            position={[0, 0, 0]}
+            scale={carbonIndex < 60 ? 1.2 : 1}
+            emissiveIntensity={carbonIndex < 60 ? 1.2 : 0.5}
+            onClick={() => setCarbonIndex(prev => Math.max(0, prev - 10))}
+            showLabel={true}
+            hasAtmosphere={true}
+            atmosphereColor="#00E0FF"
+            atmosphereIntensity={carbonIndex < 50 ? 1.0 : 0.5}
+            rotationSpeed={0.05}
+          />
+          <Planet
+            name="Mars"
+            color="#FF4D4D"
+            position={marsPositionRef.current}
+            scale={carbonIndex > 60 ? 1.3 : 1}
+            emissiveIntensity={carbonIndex > 60 ? 1.5 : 0.4}
+            onClick={() => setCarbonIndex(prev => Math.min(100, prev + 10))}
+            showLabel={true}
+            hasAtmosphere={true}
+            atmosphereColor="#FF4D4D"
+            atmosphereIntensity={0.3}
+            rotationSpeed={0.03}
+          />
+          <Planet
+            name="Titan"
+            color="#FFD166"
+            position={titanPositionRef.current}
+            scale={carbonIndex < 40 ? 1.2 : 1}
+            emissiveIntensity={carbonIndex < 40 ? 1.3 : 0.4}
+            onClick={() => setCarbonIndex(prev => Math.max(0, prev - 5))}
+            showLabel={true}
+            hasAtmosphere={true}
+            atmosphereColor="#FFD166"
+            atmosphereIntensity={0.8}
+            rotationSpeed={0.02}
+          />
+          <TradeLink start={marsPositionRef.current} end={[0, 0, 0]} color="#FF4D4D" lineWidth={3} visible={carbonIndex > 60} />
+          <TradeLink start={titanPositionRef.current} end={[0, 0, 0]} color="#00E0FF" lineWidth={3} visible={carbonIndex < 40} />
+        </Suspense>
+        
         <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.6} />
       </Canvas>
+      <GameHUD carbonIndex={carbonIndex} />
     </div>
   );
 }

@@ -11,12 +11,17 @@ export default function App() {
         <EarthScene />
 
         {/* PANEL DE SIMULACIÓN DE API */}
-        <div className="w-full bg-black/70 border-t border-[#00FFB2]/30 backdrop-blur-lg p-10 text-sm font-mono text-[#8DFD1B] overflow-y-auto max-h-[30vh]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full bg-black/70 border-t border-[#00FFB2]/30 backdrop-blur-lg p-10 text-sm font-mono text-[#8DFD1B] overflow-y-auto max-h-[30vh]"
+        >
           <h3 className="text-[#00E0FF] mb-4 font-bold tracking-widest">
             API RESPONSE STREAM
           </h3>
           <Dashboard />
-        </div>
+        </motion.div>
       </div>
     </Layout>
   );
