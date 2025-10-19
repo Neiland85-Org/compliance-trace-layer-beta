@@ -5,6 +5,7 @@ import * as THREE from "three";
 import Planet from "./Planet";
 import TradeLink from './TradeLink';
 import GameHUD from './GameHUD';
+import { usePlanetStore } from '../hooks/usePlanetStore';
 
 function CameraController() {
   const { camera } = useThree();
@@ -22,6 +23,7 @@ export default function EarthScene() {
   const [starCount, setStarCount] = useState(8000);
   const marsPositionRef = useRef([8, 2, 0]);
   const titanPositionRef = useRef([-8, -2, 0]);
+  const { selectedPlanet, selectPlanet } = usePlanetStore();
 
   useEffect(() => {
     const updateStarCount = () => {
@@ -65,39 +67,42 @@ function OrbitalUpdater({ marsPositionRef, titanPositionRef }) {
             color="#00E0FF"
             position={[0, 0, 0]}
             scale={carbonIndex < 60 ? 1.2 : 1}
-            emissiveIntensity={carbonIndex < 60 ? 1.2 : 0.5}
-            onClick={() => setCarbonIndex(prev => Math.max(0, prev - 10))}
+            emissiveIntensity={selectedPlanet === "Earth" ? 2.0 : (carbonIndex < 60 ? 1.2 : 0.5)}
+            onClick={() => selectPlanet("Earth")}
             showLabel={true}
             hasAtmosphere={true}
             atmosphereColor="#00E0FF"
             atmosphereIntensity={carbonIndex < 50 ? 1.0 : 0.5}
             rotationSpeed={0.05}
+            isSelected={selectedPlanet === "Earth"}
           />
           <Planet
             name="Mars"
             color="#FF4D4D"
             position={marsPositionRef.current}
             scale={carbonIndex > 60 ? 1.3 : 1}
-            emissiveIntensity={carbonIndex > 60 ? 1.5 : 0.4}
-            onClick={() => setCarbonIndex(prev => Math.min(100, prev + 10))}
+            emissiveIntensity={selectedPlanet === "Mars" ? 2.5 : (carbonIndex > 60 ? 1.5 : 0.4)}
+            onClick={() => selectPlanet("Mars")}
             showLabel={true}
             hasAtmosphere={true}
             atmosphereColor="#FF4D4D"
             atmosphereIntensity={0.3}
             rotationSpeed={0.03}
+            isSelected={selectedPlanet === "Mars"}
           />
           <Planet
             name="Titan"
             color="#FFD166"
             position={titanPositionRef.current}
             scale={carbonIndex < 40 ? 1.2 : 1}
-            emissiveIntensity={carbonIndex < 40 ? 1.3 : 0.4}
-            onClick={() => setCarbonIndex(prev => Math.max(0, prev - 5))}
+            emissiveIntensity={selectedPlanet === "Titan" ? 2.2 : (carbonIndex < 40 ? 1.3 : 0.4)}
+            onClick={() => selectPlanet("Titan")}
             showLabel={true}
             hasAtmosphere={true}
             atmosphereColor="#FFD166"
             atmosphereIntensity={0.8}
             rotationSpeed={0.02}
+            isSelected={selectedPlanet === "Titan"}
           />
           <TradeLink start={marsPositionRef.current} end={[0, 0, 0]} color="#FF4D4D" lineWidth={3} visible={carbonIndex > 60} />
           <TradeLink start={titanPositionRef.current} end={[0, 0, 0]} color="#00E0FF" lineWidth={3} visible={carbonIndex < 40} />

@@ -15,7 +15,8 @@ export default function Planet({
   rotationSpeed,
   hasAtmosphere = false,
   atmosphereColor,
-  atmosphereIntensity = 0.5
+  atmosphereIntensity = 0.5,
+  isSelected = false
 }) {
   const meshRef = useRef();
   const { gl } = useThree();
@@ -104,6 +105,19 @@ export default function Planet({
           />
         </mesh>
       )}
+      {isSelected && (
+        <mesh scale={scale * 1.2}>
+          <sphereGeometry args={[1.5, 48, 48]} />
+          <meshBasicMaterial
+            color={color}
+            transparent
+            opacity={0.1}
+            side={THREE.BackSide}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+          />
+        </mesh>
+      )}
       {showLabel && (
         <Html center>
           <div className="flex flex-col items-center bg-black/70 p-4 rounded-2xl border border-[#00FFB2]/30 text-[#8DFD1B]">
@@ -129,5 +143,6 @@ Planet.propTypes = {
   rotationSpeed: PropTypes.number,
   hasAtmosphere: PropTypes.bool,
   atmosphereColor: PropTypes.string,
-  atmosphereIntensity: PropTypes.number
+  atmosphereIntensity: PropTypes.number,
+  isSelected: PropTypes.bool
 };
