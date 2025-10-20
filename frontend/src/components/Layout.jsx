@@ -1,11 +1,18 @@
 import { motion } from "framer-motion";
-import UIConsole from "./UIConsole";
 import PlanetModal from "./PlanetModal";
 import { usePlanetStore } from "../hooks/usePlanetStore";
 import EarthScene from "./EarthScene";
+import { useCommandConsole } from "../hooks/useCommandConsole";
 
 export default function Layout({ children }) {
   const { selectedPlanet, closeModal } = usePlanetStore();
+  const {
+    logs,
+    generateTransaction,
+    verifyBlock,
+    generateReport,
+    deployProtocol,
+  } = useCommandConsole();
 
   return (
     <div className="relative w-full min-h-screen text-white overflow-x-hidden bg-black">
@@ -52,25 +59,47 @@ export default function Layout({ children }) {
         transition={{ delay: 0.8, duration: 0.8 }}
         className="relative z-40 bg-gradient-to-t from-black/90 via-black/60 to-transparent
                    backdrop-blur-lg border-t border-[#00ffc655]
-                   flex flex-wrap justify-center gap-6 py-6 px-4"
+                   flex flex-col items-center gap-6 py-6 px-4"
       >
-        {[
-          { label: "Verify Block", color: "from-[#00ffcc] to-[#0077ff]" },
-          { label: "Generate Report", color: "from-[#9aff68] to-[#f0ff00]" },
-          { label: "Deploy Protocol", color: "from-[#ff6600] to-[#ffaa00]" },
-          { label: "Generate Transaction", color: "from-[#111] to-[#444]" },
-        ].map((btn, idx) => (
-          <motion.button
-            key={idx}
-            whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(0,255,198,0.5)" }}
-            whileTap={{ scale: 0.95 }}
-            className={`bg-gradient-to-r ${btn.color} text-black 
-              font-bold py-3 px-6 rounded-lg font-mono tracking-wider 
-              border border-[#00ffc6]/60 hover:border-[#9aff68] transition-all duration-300`}
-          >
-            {btn.label}
-          </motion.button>
-        ))}
+        <div className="flex flex-wrap justify-center gap-6">
+          {[
+            { label: "Verify Block", action: verifyBlock, color: "from-[#00ffcc] to-[#0077ff]" },
+            { label: "Generate Report", action: generateReport, color: "from-[#9aff68] to-[#f0ff00]" },
+            { label: "Deploy Protocol", action: deployProtocol, color: "from-[#ff6600] to-[#ffaa00]" },
+            { label: "Generate Transaction", action: generateTransaction, color: "from-[#111] to-[#444]" },
+          ].map((btn, idx) => (
+            <motion.button
+              key={idx}
+              onClick={btn.action}
+              whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(0,255,198,0.5)" }}
+              whileTap={{ scale: 0.95 }}
+              className={`bg-gradient-to-r ${btn.color} text-black 
+                font-bold py-3 px-6 rounded-lg font-mono tracking-wider 
+                border border-[#00ffc6]/60 hover:border-[#9aff68] transition-all duration-300`}
+            >
+              {btn.label}
+            </motion.button>
+          ))}
+        </div>
+
+        {/* === LOG CONSOLE === */}
+        <div className="w-full mt-6 max-h-60 overflow-y-auto bg-black/70 border border-[#00ffc655] rounded-xl p-4 font-mono text-sm text-[#00ffc6]">
+          {logs.length === 0 ? (
+            <p className="text-gray-500 text-center italic">Awaiting command input...</p>
+          ) : (
+            logs.map((log) => (
+              <div key={log.id} className="mb-3 border-b border-[#00ffc633] pb-2">
+                <div className="text-xs text-gray-400">
+                  [{log.timestamp}] <span className="uppercase text-[#8DFD1B]">{log.type}</span>
+                </div>
+                <div className="font-bold">{log.message}</div>
+                <pre className="text-[#8DFD1B] text-xs mt-1">
+                  {JSON.stringify(log.details, null, 2)}
+                </pre>
+              </div>
+            ))
+          )}
+        </div>
       </motion.div>
 
       {/* === MODAL === */}
