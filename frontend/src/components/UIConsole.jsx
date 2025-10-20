@@ -2,21 +2,9 @@ import { motion } from "framer-motion";
 
 export default function UIConsole() {
   return (
-    <motion.header
-      initial={{ opacity: 0, y: -40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
-      className="absolute top-0 left-0 right-0 z-20 w-full p-6 sm:p-10 flex flex-col items-center text-center"
-    >
-      {/* Degradado superior para legibilidad sobre el cosmos */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#000000cc] via-transparent to-transparent pointer-events-none rounded-b-3xl"></div>
-
-      {/* --- TÍTULO PRINCIPAL --- */}
+    <div className="absolute bottom-4 left-4 z-20 bg-black/60 border border-[#00ffc6]/30 rounded-2xl p-4 backdrop-blur-md">
       <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="text-4xl sm:text-6xl md:text-7xl font-extrabold uppercase tracking-tight text-[#9aff68] drop-shadow-[0_0_40px_#00ffc6] neon-glow"
+        className="text-lg font-bold text-[#00ffc6]"
         style={{
           textShadow:
             "0 0 10px #00ffc6, 0 0 30px #00ffc6, 0 0 60px rgba(0,255,198,0.7)",
@@ -125,6 +113,6 @@ export default function UIConsole() {
           Compliance Trace Layer v0.1.0-beta | Environmental Blockchain Protocol
         </p>
       </motion.footer>
-    </motion.header>
+    </div>
   );
 }
