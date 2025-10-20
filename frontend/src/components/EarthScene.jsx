@@ -1,27 +1,6 @@
-/**
-Compliance Trace Layer — v0.1.0-beta
-
-© 2025 Neil Muñoz Lago. All rights reserved.
-
-Private research prototype for environmental blockchain visualization and
-
-carbon-credit traceability. Developed using React Three Fiber, Framer Motion,
-
-and Node.js backend services for compliance data integrity.
-
-This software is proprietary and not open source.
-
-Unauthorized reproduction, modification, or redistribution of this code,
-
-in whole or in part, is strictly prohibited without prior written consent
-
-from the author.
-
-This project is not affiliated with TRAYCER, TRACYER, or any external framework.
-*/
 import * as THREE from "three";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { OrbitControls, Stars, Environment } from "@react-three/drei";
+import { OrbitControls, Stars } from "@react-three/drei";
 import { useRef } from "react";
 
 // componente de planeta genérico
@@ -52,34 +31,35 @@ function Planet({ texturePath, position, baseScale = 1, color }) {
 
 export default function EarthScene() {
   return (
-    <div className="absolute inset-0 w-full h-full z-0">
-      <Canvas camera={{ position: [0, 0, 6], fov: 55 }}>
+    <div className="absolute top-0 left-0 w-full h-[50vh] z-0">
+      <Canvas
+        camera={{ position: [0, 0, 10], fov: 55 }}
+        gl={{ antialias: true }}
+      >
         <color attach="background" args={["#000000"]} />
-        <Stars radius={300} depth={80} count={8000} factor={6} fade />
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[5, 5, 5]} intensity={1.5} />
+        <Stars radius={200} depth={60} count={5000} factor={5} fade />
 
-        {/* PLANETAS */}
+        <ambientLight intensity={0.7} />
+        <directionalLight position={[5, 5, 5]} intensity={1.5} />
+        <pointLight position={[-5, -5, -5]} intensity={1} color={"#00ffff"} />
+
+        {/* Planetas */}
         <Planet
           texturePath="/textures/earth/earth_daymap.jpg"
           position={[0, 0, 0]}
-          baseScale={2}
-          color="#ffffff"
+          baseScale={3.5}
         />
         <Planet
           texturePath="/textures/mars/mars_1k_color.jpg"
-          position={[5, 1, -2]}
-          baseScale={1.2}
-          color="#ff5533"
+          position={[8, 2, -3]}
+          baseScale={2.2}
         />
         <Planet
           texturePath="/textures/titan/jupiter_2k.jpg"
-          position={[-5, -1, -2]}
-          baseScale={1.4}
-          color="#ffcc66"
+          position={[-10, -2, -4]}
+          baseScale={2.8}
         />
 
-        <Environment preset="sunset" />
         <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
       </Canvas>
     </div>
