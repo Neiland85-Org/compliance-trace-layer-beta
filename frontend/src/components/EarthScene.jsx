@@ -1,33 +1,29 @@
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars, Html, Environment } from "@react-three/drei";
-import { useRef, useState } from "react";
 import * as THREE from "three";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { OrbitControls, Stars, Environment } from "@react-three/drei";
+import { useRef } from "react";
 
-function Planet({ textureUrl, position, baseScale = 1, color, emission }) {
-  const meshRef = useRef();
-  const [pulse, setPulse] = useState(0);
+// componente de planeta genérico
+function Planet({ texturePath, position, baseScale = 1, color }) {
+  const mesh = useRef();
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
-    // rotación y respiración "ecológica"
-    meshRef.current.rotation.y += 0.001;
-    const breathing = Math.sin(t * 1.5) * 0.04; // respiración sutil
-    const targetScale = baseScale + breathing;
-    meshRef.current.scale.set(targetScale, targetScale, targetScale);
-    setPulse((Math.sin(t * 2) + 1) / 2);
+    mesh.current.rotation.y += 0.001;
+    const pulse = Math.sin(t) * 0.05;
+    mesh.current.scale.setScalar(baseScale + pulse);
   });
 
-  const texture = new THREE.TextureLoader().load(textureUrl);
+  const texture = useLoader(THREE.TextureLoader, texturePath);
 
   return (
-    <mesh ref={meshRef} position={position}>
+    <mesh ref={mesh} position={position}>
       <sphereGeometry args={[1, 64, 64]} />
       <meshStandardMaterial
         map={texture}
-        emissive={new THREE.Color(color || "#00ffc6")}
-        emissiveIntensity={0.1 + emission * 0.2}
-        roughness={0.7}
-        metalness={0.2}
+        color={color}
+        roughness={0.8}
+        metalness={0.1}
       />
     </mesh>
   );
@@ -36,57 +32,34 @@ function Planet({ textureUrl, position, baseScale = 1, color, emission }) {
 export default function EarthScene() {
   return (
     <div className="absolute inset-0 w-full h-full z-0">
-      <Canvas camera={{ position: [0, 0, 6], fov: 60 }}>
-        {/* Fondo cósmico */}
+      <Canvas camera={{ position: [0, 0, 6], fov: 55 }}>
         <color attach="background" args={["#000000"]} />
-        <Stars radius={200} depth={50} count={8000} factor={6} saturation={0} fade />
-
-        {/* Luz ambiental suave */}
-        <ambientLight intensity={0.5} />
+        <Stars radius={300} depth={80} count={8000} factor={6} fade />
+        <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={1.5} />
 
-        {/* Planetas con respiración */}
+        {/* PLANETAS */}
         <Planet
-          textureUrl="/textures/earth_daymap.jpg"
+          texturePath="/textures/earth/earth_daymap.jpg"
           position={[0, 0, 0]}
-          baseScale={1.8}
-          color="#00ffc6"
-          emission={0.5}
+          baseScale={2}
+          color="#ffffff"
         />
         <Planet
-          textureUrl="/textures/mars.jpg"
-          position={[4, 1, -2]}
-          baseScale={0.8}
-          color="#ff5522"
-          emission={0.3}
+          texturePath="/textures/mars/mars_1k_color.jpg"
+          position={[5, 1, -2]}
+          baseScale={1.2}
+          color="#ff5533"
         />
         <Planet
-          textureUrl="/textures/titan.jpg"
-          position={[-4, -1, -2]}
-          baseScale={1}
-          color="#ffaa33"
-          emission={0.2}
+          texturePath="/textures/titan/jupiter_2k.jpg"
+          position={[-5, -1, -2]}
+          baseScale={1.4}
+          color="#ffcc66"
         />
 
-        {/* Ambiente reflectante */}
         <Environment preset="sunset" />
-
-        {/* Control de cámara */}
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          minPolarAngle={Math.PI / 2.5}
-          maxPolarAngle={Math.PI / 2}
-          autoRotate
-          autoRotateSpeed={0.4}
-        />
-
-        {/* Texto holográfico central */}
-        <Html position={[0, -2.4, 0]}>
-          <div className="text-[#00ffc6]/80 text-center text-sm font-mono tracking-widest animate-pulse">
-            Carbon Index Synchronization Active
-          </div>
-        </Html>
+        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
       </Canvas>
     </div>
   );
