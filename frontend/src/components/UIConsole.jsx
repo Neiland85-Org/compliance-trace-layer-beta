@@ -2,61 +2,51 @@ import { motion } from "framer-motion";
 
 export default function UIConsole() {
   return (
-    <div className="absolute top-0 left-0 right-0 z-10 p-6 space-y-4">
-      {/* HEADER ANIMADO */}
-      <motion.header
+    <motion.header
+      initial={{ opacity: 0, y: -40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1 }}
+      className="absolute top-0 left-0 right-0 z-20 w-full p-6 sm:p-10 flex flex-col items-center text-center"
+    >
+      {/* Degradado superior para legibilidad sobre el cosmos */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#000000cc] via-transparent to-transparent pointer-events-none rounded-b-3xl"></div>
+
+      {/* --- TÍTULO PRINCIPAL --- */}
+      <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="text-center"
+        transition={{ delay: 0.2 }}
+        className="text-4xl sm:text-6xl md:text-7xl font-extrabold uppercase tracking-tight text-[#9aff68] drop-shadow-[0_0_40px_#00ffc6] neon-glow"
+        style={{
+          textShadow:
+            "0 0 10px #00ffc6, 0 0 30px #00ffc6, 0 0 60px rgba(0,255,198,0.7)",
+        }}
       >
-        <motion.h1
-          className="text-4xl md:text-6xl font-bold text-[#9aff68] mb-2 tracking-wider"
-          style={{
-            textShadow: "0 0 20px #9aff68, 0 0 40px #9aff68, 0 0 60px #9aff68"
-          }}
-          animate={{
-            textShadow: [
-              "0 0 20px #9aff68, 0 0 40px #9aff68, 0 0 60px #9aff68",
-              "0 0 10px #9aff68, 0 0 20px #9aff68, 0 0 30px #9aff68",
-              "0 0 20px #9aff68, 0 0 40px #9aff68, 0 0 60px #9aff68"
-            ]
-          }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        >
-          COMPLIANCE TRACE LAYER
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="text-[#7cf9ff] text-lg md:text-xl font-mono tracking-widest"
-        >
-          BLOCKCHAIN ENVIRONMENTAL VERIFICATION SYSTEM
-        </motion.p>
-      </motion.header>
+        Compliance Trace Layer
+      </motion.h1>
 
-      {/* BLOQUE DE TRANSMISIÓN GAIA */}
+      <p className="mt-2 text-gray-300 text-xs sm:text-sm md:text-base uppercase tracking-[0.2em]">
+        Environmental Blockchain Command Interface
+      </p>
+
+      {/* --- HUD: GAIA TRANSMISSION --- */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.3, duration: 0.6 }}
-        className="bg-black/80 border-2 border-[#00ffc6] rounded-lg p-4 backdrop-blur-sm"
-        style={{
-          boxShadow: "0 0 20px rgba(0, 255, 198, 0.3), inset 0 0 20px rgba(0, 255, 198, 0.1)"
-        }}
+        transition={{ delay: 0.4, duration: 0.6 }}
+        className="relative mt-6 bg-black/60 border border-[#00ffc6]/40 rounded-2xl p-4 sm:p-6 w-full max-w-3xl backdrop-blur-sm shadow-[0_0_25px_rgba(0,255,198,0.15)]"
       >
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-[#00ffc6] font-bold text-sm font-mono tracking-widest">
+          <h3 className="text-[#00ffc6] font-bold text-sm sm:text-base font-mono tracking-widest">
             GAIA TRANSMISSION
           </h3>
           <motion.div
-            animate={{ opacity: [1, 0.5, 1] }}
+            animate={{ opacity: [1, 0.4, 1] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-2 h-2 bg-[#00ffc6] rounded-full"
+            className="w-3 h-3 bg-[#00ffc6] rounded-full shadow-[0_0_15px_#00ffc6]"
           />
         </div>
-        <div className="text-[#9aff68] text-xs font-mono space-y-1">
+        <div className="text-[#9aff68] text-xs sm:text-sm font-mono space-y-1">
           <p>► Carbon footprint analysis: ACTIVE</p>
           <p>► Blockchain verification: SYNCED</p>
           <p>► Environmental compliance: MONITORING</p>
@@ -64,70 +54,77 @@ export default function UIConsole() {
         </div>
       </motion.div>
 
-      {/* MEDIDOR CARBON INDEX */}
+      {/* --- PANEL CARBON INDEX --- */}
       <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.6, duration: 0.6 }}
-        className="bg-black/80 border border-[#00ffc6]/50 rounded-lg p-4 backdrop-blur-sm"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7, duration: 0.6 }}
+        className="relative mt-4 bg-black/60 border border-[#00ffc6]/30 rounded-2xl p-4 sm:p-6 w-full max-w-3xl backdrop-blur-sm shadow-[0_0_25px_rgba(0,255,198,0.1)]"
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[#7cf9ff] font-mono text-sm">CARBON INDEX</span>
+          <span className="text-[#7cf9ff] font-mono text-sm sm:text-base">
+            CARBON INDEX
+          </span>
           <motion.span
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="text-[#9aff68] font-bold text-lg"
+            className="text-[#9aff68] font-bold text-lg sm:text-xl"
           >
             80 ⚠️
           </motion.span>
         </div>
-        <div className="w-full bg-gray-800 rounded-full h-2">
+        <div className="w-full bg-gray-800/60 rounded-full h-2 overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: "80%" }}
             transition={{ delay: 1, duration: 1.5, ease: "easeOut" }}
-            className="bg-gradient-to-r from-[#00ffc6] to-[#9aff68] h-2 rounded-full"
-            style={{
-              boxShadow: "0 0 10px rgba(0, 255, 198, 0.5)"
-            }}
+            className="bg-gradient-to-r from-[#00ffc6] to-[#9aff68] h-2 rounded-full shadow-[0_0_10px_rgba(0,255,198,0.6)]"
           />
         </div>
-        <p className="text-[#7cf9ff] text-xs font-mono mt-2">Threshold: 60 | Status: ELEVATED</p>
+        <p className="text-[#7cf9ff] text-xs font-mono mt-2">
+          Threshold: 60 | Status: ELEVATED
+        </p>
       </motion.div>
 
-      {/* PANEL DE ACCIÓN */}
+      {/* --- BOTONES PRINCIPALES --- */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.9, duration: 0.6 }}
-        className="text-center"
+        transition={{ delay: 1.1, duration: 0.6 }}
+        className="mt-6 flex flex-wrap justify-center gap-4 sm:gap-6"
       >
-        <motion.button
-          whileHover={{
-            scale: 1.05,
-            boxShadow: "0 0 30px rgba(0, 255, 198, 0.6)"
-          }}
-          whileTap={{ scale: 0.95 }}
-          className="bg-gradient-to-r from-[#00ffc6] to-[#9aff68] text-black font-bold py-3 px-8 rounded-lg font-mono tracking-wider border-2 border-[#00ffc6] hover:border-[#9aff68] transition-all duration-300"
-          style={{
-            textShadow: "0 0 5px rgba(0, 0, 0, 0.5)"
-          }}
-        >
-          GENERATE TRANSACTION
-        </motion.button>
+        {[
+          { label: "Verify Block", colorFrom: "#00ffcc", colorTo: "#0077ff" },
+          { label: "Generate Report", colorFrom: "#9aff68", colorTo: "#00ffc6" },
+          { label: "Deploy Protocol", colorFrom: "#ffcc00", colorTo: "#ff6600" },
+        ].map((btn, i) => (
+          <motion.button
+            key={i}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative group px-8 py-3 rounded-xl overflow-hidden font-bold text-black tracking-widest uppercase transition-all duration-300"
+            style={{
+              background: `linear-gradient(90deg, ${btn.colorFrom}, ${btn.colorTo})`,
+              boxShadow: `0 0 30px ${btn.colorFrom}55`,
+            }}
+          >
+            <span className="relative z-10">{btn.label}</span>
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-white/20 to-transparent blur-md transition-opacity duration-300"></span>
+          </motion.button>
+        ))}
       </motion.div>
 
-      {/* FOOTER DISCRETO */}
+      {/* --- FOOTER --- */}
       <motion.footer
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.8 }}
-        className="text-center pt-4 border-t border-[#00ffc6]/20"
+        transition={{ delay: 1.5, duration: 0.8 }}
+        className="text-center mt-6 border-t border-[#00ffc6]/20 pt-3 w-full max-w-3xl"
       >
-        <p className="text-[#7cf9ff] text-xs font-mono">
+        <p className="text-[#7cf9ff] text-xs sm:text-sm font-mono opacity-70">
           Compliance Trace Layer v0.1.0-beta | Environmental Blockchain Protocol
         </p>
       </motion.footer>
-    </div>
+    </motion.header>
   );
 }
