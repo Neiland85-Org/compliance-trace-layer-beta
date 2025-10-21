@@ -1,9 +1,12 @@
 import * as THREE from "three";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Astronaut from './Astronaut';
 import Satellite from './Satellite';
+import BlackHole from './BlackHole';
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
+import { BlendFunction } from 'postprocessing';
 import useRhythmPattern from '../hooks/useRhythmPattern';
 
 function Planet({ texturePath, position, baseScale }) {
@@ -29,6 +32,18 @@ export default function EarthScene() {
     tolerancePercent: 10,
     debug: true
   });
+
+  const [blackHoleActive, setBlackHoleActive] = useState(false);
+  const [astronautPosition, setAstronautPosition] = useState([5, 0, 5]);
+
+  // Testing controls - TODO: Remove in production
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'b') setBlackHoleActive(prev => !prev);
+    };
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
 
   return (
     <div className="absolute top-0 left-0 w-full z-0" style={{ height: "100vh" }}>
@@ -80,7 +95,33 @@ export default function EarthScene() {
           onClick={rhythm.handleClick}
         />
 
+        {/* 🌀 AGUJERO NEGRO */}
+        <BlackHole
+          position={[0, -5, -10]}
+          scale={2}
+          isActive={blackHoleActive}
+          attractionSpeed={0.5}
+          targetPosition={astronautPosition}
+          onAstronautCaptured={() => console.log('Astronaut captured by black hole!')}
+          intensity={blackHoleActive ? 2.0 : 0.5}
+          showLabel={blackHoleActive}
+        />
+
         <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
+
+        <EffectComposer>
+          <Bloom
+            intensity={blackHoleActive ? 2.0 : 0.8}
+            luminanceThreshold={0.2}
+            luminanceSmoothing={0.9}
+            mipmapBlur
+          />
+          <Vignette
+            offset={blackHoleActive ? 0.3 : 0.5}
+            darkness={blackHoleActive ? 0.8 : 0.5}
+            blendFunction={BlendFunction.NORMAL}
+          />
+        </EffectComposer>
       </Canvas>
     </div>
   );

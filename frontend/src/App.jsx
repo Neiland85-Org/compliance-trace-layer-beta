@@ -1,9 +1,26 @@
 import Layout from "./components/Layout";
 import EarthScene from "./components/EarthScene";
 import Dashboard from "./components/Dashboard";
+import GameOverScreen from "./components/GameOverScreen";
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 export default function App() {
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [gameOverData, setGameOverData] = useState({ finalScore: 0, cause: 'rhythm' });
+
+  // Testing trigger - TODO: Remove in production
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'g') {
+        setIsGameOver(true);
+        setGameOverData({ finalScore: 75, cause: 'rhythm' });
+      }
+    };
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
+
   return (
     <Layout>
       <div className="flex flex-col items-center justify-center relative">
@@ -20,6 +37,14 @@ export default function App() {
           <Dashboard />
         </motion.div>
       </div>
+
+      <GameOverScreen
+        isVisible={isGameOver}
+        onRestart={() => { setIsGameOver(false); /* TODO: Reset game state */ }}
+        onMainMenu={() => { setIsGameOver(false); /* TODO: Navigate to main menu */ }}
+        finalScore={gameOverData.finalScore}
+        cause={gameOverData.cause}
+      />
     </Layout>
   );
 }
