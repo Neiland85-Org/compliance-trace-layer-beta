@@ -2,6 +2,9 @@ import * as THREE from "three";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
 import { useRef } from "react";
+import Astronaut from './Astronaut';
+import Satellite from './Satellite';
+import useRhythmPattern from '../hooks/useRhythmPattern';
 
 function Planet({ texturePath, position, baseScale }) {
   const mesh = useRef();
@@ -20,18 +23,26 @@ function Planet({ texturePath, position, baseScale }) {
 }
 
 export default function EarthScene() {
+  const rhythm = useRhythmPattern({
+    minPatternLength: 3,
+    requiredRepetitions: 2,
+    tolerancePercent: 10,
+    debug: true
+  });
+
   return (
     <div className="absolute top-0 left-0 w-full z-0" style={{ height: "100vh" }}>
       <Canvas
-        camera={{ position: [0, 0, 14], fov: 45 }}
+        camera={{ position: [0, 5, 18], fov: 50 }}
         gl={{ antialias: true }}
         style={{ height: "100%", width: "100%" }}
       >
         <color attach="background" args={["#000000"]} />
         <Stars radius={200} depth={60} count={7000} factor={5} fade />
-        <ambientLight intensity={0.6} />
+        <ambientLight intensity={0.8} />
         <directionalLight position={[5, 5, 5]} intensity={1.5} />
         <pointLight position={[-5, -5, -5]} intensity={1} color={"#00ffff"} />
+        <pointLight position={[10, 5, 10]} intensity={0.8} color={"#ffffff"} />
 
         {/* 🌍 PLANETAS */}
         <Planet
@@ -48,6 +59,25 @@ export default function EarthScene() {
           texturePath="/textures/titan/jupiter_2k.jpg"
           position={[-10, -2, -4]}
           baseScale={2.8}
+        />
+
+        {/* 🛰️ SATÉLITE DE OPERACIONES */}
+        <Satellite
+          position={[-8, 3, -6]}
+          scale={0.05}
+          showLabel={true}
+          isTarget={true}
+          rotationSpeed={0.2}
+          onClick={() => console.log('Satellite clicked')}
+        />
+
+        {/* 🧑‍🚀 ASTRONAUTA */}
+        <Astronaut
+          position={[5, 0, 5]}
+          scale={0.01}
+          showLabel={true}
+          isControlled={false}
+          onClick={rhythm.handleClick}
         />
 
         <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
