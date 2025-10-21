@@ -1,13 +1,20 @@
 import * as THREE from "three";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import Astronaut from './Astronaut';
 import Satellite from './Satellite';
 import BlackHole from './BlackHole';
+<<<<<<< HEAD
 import CookieBanner from './CookieBanner';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { BlendFunction } from 'postprocessing';
+=======
+import RhythmFeedback from './RhythmFeedback';
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
+import { BlendFunction } from 'postprocessing';
+import useRhythmPattern from '../hooks/useRhythmPattern';
+>>>>>>> a2ee324 (Implement complete game mechanics with physics-based astronaut movement, rhythm pattern validation, collision detection, and comprehensive UI feedback)
 import { usePlanetStore } from '../hooks/usePlanetStore';
 
 function Planet({ texturePath, position, baseScale }) {
@@ -30,6 +37,7 @@ export default function EarthScene() {
   const { stabilityScore, getStabilityPercentage, resetStabilization } = usePlanetStore();
   const stabilityPercentage = getStabilityPercentage();
 
+<<<<<<< HEAD
   const [astronautPosition, setAstronautPosition] = useState([5, 0, 5]);
 
   // Estado para consentimiento de cookies
@@ -65,6 +73,45 @@ export default function EarthScene() {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [resetStabilization]);
+=======
+  // Store subscriptions
+  const gameState = usePlanetStore(state => state.gameState);
+  const astronautPosition = usePlanetStore(state => state.astronautPosition);
+  const satellitePosition = usePlanetStore(state => state.satellitePosition);
+  const blackHoleActive = usePlanetStore(state => state.blackHoleActive);
+  const patternStreak = usePlanetStore(state => state.patternStreak);
+  const handleValidPattern = usePlanetStore(state => state.handleValidPattern);
+  const handleInvalidPattern = usePlanetStore(state => state.handleInvalidPattern);
+  const handleClickStore = usePlanetStore(state => state.handleClick);
+  const triggerWin = usePlanetStore(state => state.triggerWin);
+  const triggerGameOver = usePlanetStore(state => state.triggerGameOver);
+
+  // Connect rhythm pattern to store
+  useEffect(() => {
+    if (rhythm.isPatternValid) {
+      handleValidPattern(rhythm.patternScore);
+    } else if (rhythm.clickHistory.length >= 3) {
+      // Only trigger invalid after enough clicks
+      handleInvalidPattern();
+    }
+  }, [rhythm.isPatternValid, rhythm.patternScore, rhythm.clickHistory.length]);
+
+  // Collision detection
+  useFrame(() => {
+    if (gameState !== 'PLAYING') return;
+
+    // Calculate distance between astronaut and satellite
+    const dx = astronautPosition[0] - satellitePosition[0];
+    const dy = astronautPosition[1] - satellitePosition[1];
+    const dz = astronautPosition[2] - satellitePosition[2];
+    const distance = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+    // Win condition: astronaut reaches satellite
+    if (distance < 2.0) {
+      triggerWin();
+    }
+  });
+>>>>>>> a2ee324 (Implement complete game mechanics with physics-based astronaut movement, rhythm pattern validation, collision detection, and comprehensive UI feedback)
 
   return (
     <div className="absolute top-0 left-0 w-full z-0" style={{ height: "100vh" }}>
@@ -107,8 +154,12 @@ export default function EarthScene() {
 
         {/* 🛰️ SATÉLITE DE OPERACIONES */}
         <Satellite
+<<<<<<< HEAD
           position={[-6, 2, -4]}
           scale={0.08}
+=======
+          scale={0.05}
+>>>>>>> a2ee324 (Implement complete game mechanics with physics-based astronaut movement, rhythm pattern validation, collision detection, and comprehensive UI feedback)
           showLabel={true}
           isTarget={true}
           rotationSpeed={0.3}
@@ -116,17 +167,39 @@ export default function EarthScene() {
 
         {/* 🧑‍🚀 ASTRONAUTA */}
         <Astronaut
+<<<<<<< HEAD
           position={[4, 1, 3]}
           scale={0.015}
           showLabel={true}
           isControlled={false}
+=======
+          scale={0.01}
+          showLabel={true}
+          onClick={() => {
+            handleClickStore();
+            rhythm.handleClick();
+          }}
+>>>>>>> a2ee324 (Implement complete game mechanics with physics-based astronaut movement, rhythm pattern validation, collision detection, and comprehensive UI feedback)
         />
 
         {/* 🌀 AGUJERO NEGRO */}
         <BlackHole
+<<<<<<< HEAD
           position={[0, -3, -8]}
           stabilityScore={stabilityScore}
           showLabel={true}
+=======
+          position={[0, -5, -10]}
+          scale={2}
+          isActive={blackHoleActive}
+          attractionSpeed={0.5}
+          targetPosition={astronautPosition}
+          onAstronautCaptured={() => {
+            triggerGameOver('rhythm');
+          }}
+          intensity={blackHoleActive ? 2.0 : 0.5}
+          showLabel={blackHoleActive}
+>>>>>>> a2ee324 (Implement complete game mechanics with physics-based astronaut movement, rhythm pattern validation, collision detection, and comprehensive UI feedback)
         />
 
         <OrbitControls 
@@ -140,7 +213,11 @@ export default function EarthScene() {
 
         <EffectComposer>
           <Bloom
+<<<<<<< HEAD
             intensity={blackHoleActive ? blackHoleIntensity : Math.max(0.3, stabilityPercentage / 100)}
+=======
+            intensity={rhythm.isPatternValid ? 1.5 : (blackHoleActive ? 2.0 : 0.8)}
+>>>>>>> a2ee324 (Implement complete game mechanics with physics-based astronaut movement, rhythm pattern validation, collision detection, and comprehensive UI feedback)
             luminanceThreshold={0.2}
             luminanceSmoothing={0.9}
             mipmapBlur
@@ -153,8 +230,26 @@ export default function EarthScene() {
         </EffectComposer>
       </Canvas>
 
+<<<<<<< HEAD
       {/* 🍪 BANNER DE COOKIES - Overlay HTML */}
       <CookieBanner onAccept={() => handleConsentChange({ accepted: true })} onReject={() => handleConsentChange({ accepted: false })} onCustomize={() => handleConsentChange({ customized: true })} />
+=======
+      {gameState === 'PLAYING' && (
+        <RhythmFeedback
+          isPatternValid={rhythm.isPatternValid}
+          patternScore={rhythm.patternScore}
+          streak={patternStreak}
+          failureCount={usePlanetStore(state => state.failureCount)}
+        />
+      )}
+
+      {/* Debug logging */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed bottom-4 left-4 bg-black/80 text-white p-2 rounded text-xs font-mono z-50">
+          State: {gameState} | Streak: {patternStreak} | Black Hole: {blackHoleActive ? 'ON' : 'OFF'}
+        </div>
+      )}
+>>>>>>> a2ee324 (Implement complete game mechanics with physics-based astronaut movement, rhythm pattern validation, collision detection, and comprehensive UI feedback)
     </div>
   );
 }

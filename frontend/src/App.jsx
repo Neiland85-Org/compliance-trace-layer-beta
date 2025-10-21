@@ -4,6 +4,7 @@ import GameHUD from "./components/GameHUD";
 import GameOverScreen from "./components/GameOverScreen";
 import { motion } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
+<<<<<<< HEAD
 import { usePlanetStore } from "./hooks/usePlanetStore";
 
 export default function App() {
@@ -46,6 +47,31 @@ export default function App() {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
+=======
+import { usePlanetStore } from './hooks/usePlanetStore';
+
+export default function App() {
+  // Store subscriptions
+  const gameState = usePlanetStore(state => state.gameState);
+  const finalScore = usePlanetStore(state => state.finalScore);
+  const totalClicks = usePlanetStore(state => state.totalClicks);
+  const validPatterns = usePlanetStore(state => state.validPatterns);
+  const gameStartTime = usePlanetStore(state => state.gameStartTime);
+  const resetGame = usePlanetStore(state => state.resetGame);
+
+  // Derive state
+  const isGameOver = gameState === 'GAME_OVER';
+  const isWin = gameState === 'WIN';
+
+  // Calculate survival time
+  const survivalTime = useMemo(() => {
+    if (!gameStartTime) return '0:00';
+    const elapsed = Date.now() - gameStartTime;
+    const minutes = Math.floor(elapsed / 60000);
+    const seconds = Math.floor((elapsed % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }, [gameStartTime, gameState]);
+>>>>>>> a2ee324 (Implement complete game mechanics with physics-based astronaut movement, rhythm pattern validation, collision detection, and comprehensive UI feedback)
 
   return (
     <>
@@ -71,6 +97,7 @@ export default function App() {
 
       {/* GameOverScreen solo en modo victoria - overlay global */}
       <GameOverScreen
+<<<<<<< HEAD
         isVisible={isVictory}
         onRestart={handleRestart}
         onMainMenu={handleMainMenu}
@@ -79,5 +106,30 @@ export default function App() {
         message="La idempotencia ha sido alcanzada. El sistema se sostiene a sí mismo."
       />
     </>
+=======
+        isVisible={isGameOver || isWin}
+        onRestart={() => {
+          resetGame();
+        }}
+        onMainMenu={() => {
+          resetGame();
+          // TODO: Navigate to main menu if implemented
+          window.location.reload(); // Temporary: reload page
+        }}
+        finalScore={finalScore}
+        cause={isWin ? 'win' : 'rhythm'}
+        totalClicks={totalClicks}
+        validPatterns={validPatterns}
+        survivalTime={survivalTime}
+      />
+
+      {/* Debug indicator */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 left-4 bg-black/80 text-white p-2 rounded text-xs font-mono z-50">
+          Game State: {gameState}
+        </div>
+      )}
+    </Layout>
+>>>>>>> a2ee324 (Implement complete game mechanics with physics-based astronaut movement, rhythm pattern validation, collision detection, and comprehensive UI feedback)
   );
 }
