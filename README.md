@@ -20,10 +20,12 @@
 
 ## Tecnologías Utilizadas
 
-- **Frontend**: React 18.3.1, Vite 7.1.10, React Three Fiber 8.18.0, Three.js 0.161.0, TailwindCSS 4.1.14, Framer Motion 11.0.0, Zustand 5.0.8.
+- **Frontend**: React 18.3.1, Vite 7.1.10, React Three Fiber 8.18.0, Three.js 0.171.0, TailwindCSS 4.1.14, Framer Motion 11.0.0, Zustand 5.0.8.
 - **Backend**: Node.js, Express.js, Axios para integraciones.
 - **Herramientas de Desarrollo**: ESLint, PostCSS, Autoprefixer.
 - **Control de Versiones**: Git, con ramas main y development para gestión colaborativa.
+
+**Nota sobre versiones**: Se utiliza `@react-three/postprocessing@^2.15.1` compatible con React Three Fiber 8.x. La versión 3.x requiere React 19 + R3F 9 y se adoptará al actualizar el stack. Three.js está fijado en ^0.171.0 para compatibilidad con postprocessing 2.x y evitar regresiones con versiones superiores.
 
 ## Instalación y Uso
 
@@ -64,3 +66,7 @@ Este proyecto está en fase beta. Para contribuir:
 ## Licencia
 
 Ver `LICENSE` para detalles.
+
+## Mejoras Futuras
+
+- **Migración de Stack**: Actualizar a React 19, React Three Fiber 9.x y @react-three/postprocessing 3.x para aprovechar nuevas características y mejor compatibilidad. (Tracking ticket pendiente en GitHub).
