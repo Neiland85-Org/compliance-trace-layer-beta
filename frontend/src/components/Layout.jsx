@@ -7,7 +7,7 @@ export default function Layout({ children }) {
   const { selectedPlanet, closeModal } = usePlanetStore();
 
   return (
-    <div className="relative w-full min-h-screen text-white overflow-hidden bg-black">
+    <div className="relative w-full min-h-screen text-white bg-black">
       {/* === COSMIC SKY BANNER ocupa casi toda la pantalla === */}
       <section className="relative w-full h-[120vh]">
         <EarthScene />

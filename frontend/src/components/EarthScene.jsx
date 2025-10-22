@@ -5,9 +5,10 @@ import { useRef, useState, useEffect } from "react";
 import Astronaut from './Astronaut';
 import Satellite from './Satellite';
 import BlackHole from './BlackHole';
+import CookieBanner from './CookieBanner.jsx';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { BlendFunction } from 'postprocessing';
-import useRhythmPattern from '../hooks/useRhythmPattern';
+import { usePlanetStore } from '../hooks/usePlanetStore';
 
 function Planet({ texturePath, position, baseScale }) {
   const mesh = useRef();
@@ -26,29 +27,57 @@ function Planet({ texturePath, position, baseScale }) {
 }
 
 export default function EarthScene() {
-  const rhythm = useRhythmPattern({
-    minPatternLength: 3,
-    requiredRepetitions: 2,
-    tolerancePercent: 10,
-    debug: true
-  });
+  const { stabilityScore, getStabilityPercentage, resetStabilization } = usePlanetStore();
+  const stabilityPercentage = getStabilityPercentage();
 
-  const [blackHoleActive, setBlackHoleActive] = useState(false);
   const [astronautPosition, setAstronautPosition] = useState([5, 0, 5]);
 
-  // Testing controls - TODO: Remove in production
+  // Estado para consentimiento de cookies
+  const [cookieConsent, setCookieConsent] = useState(null);
+
+  // Handler de cambio de consentimiento
+  const handleConsentChange = (preferences) => {
+    setCookieConsent(preferences);
+    console.log('Cookie consent updated:', preferences);
+  };
+
+  // El BlackHole se activa cuando la estabilidad es baja (< 100)
+  // Su intensidad es inversamente proporcional a la estabilidad
+  const blackHoleActive = stabilityScore < 100;
+  const blackHoleIntensity = Math.max(0.3, 2.0 - (stabilityPercentage / 50));
+
+  useEffect(() => {
+    console.log('🌍 EarthScene mounted - stability:', stabilityScore, 'percentage:', stabilityPercentage);
+  }, []);
+
+  useEffect(() => {
+    console.log('🔄 Stability updated:', stabilityScore, 'blackHoleActive:', blackHoleActive);
+  }, [stabilityScore, blackHoleActive]);
+
+  // Keybind para reset de estabilización
   useEffect(() => {
     const handleKeyPress = (e) => {
-      if (e.key === 'b') setBlackHoleActive(prev => !prev);
+      if (e.key === 'r') {
+        console.log('🔄 Resetting stabilization...');
+        resetStabilization();
+      }
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
+  }, [resetStabilization]);
 
   return (
     <div className="absolute top-0 left-0 w-full z-0" style={{ height: "100vh" }}>
+      {/* Debug Panel */}
+      <div className="absolute top-4 left-4 z-10 bg-black/80 text-cyan-400 p-3 rounded-lg font-mono text-sm border border-cyan-400/40">
+        <div>Stability: {stabilityPercentage.toFixed(0)}%</div>
+        <div>Score: {stabilityScore}/100</div>
+        <div>BlackHole: {blackHoleActive ? 'ACTIVE' : 'STABLE'}</div>
+        <div>Press 'R' to reset</div>
+      </div>
+
       <Canvas
-        camera={{ position: [0, 5, 18], fov: 50 }}
+        camera={{ position: [0, 3, 12], fov: 60 }}
         gl={{ antialias: true }}
         style={{ height: "100%", width: "100%" }}
       >
@@ -78,47 +107,53 @@ export default function EarthScene() {
 
         {/* 🛰️ SATÉLITE DE OPERACIONES */}
         <Satellite
-          position={[-8, 3, -6]}
-          scale={0.05}
+          position={[-6, 2, -4]}
+          scale={0.08}
           showLabel={true}
           isTarget={true}
-          rotationSpeed={0.2}
-          onClick={() => console.log('Satellite clicked')}
+          rotationSpeed={0.3}
         />
 
         {/* 🧑‍🚀 ASTRONAUTA */}
         <Astronaut
-          position={[5, 0, 5]}
-          scale={0.01}
+          position={[4, 1, 3]}
+          scale={0.015}
           showLabel={true}
           isControlled={false}
-          onClick={rhythm.handleClick}
         />
 
         {/* 🌀 AGUJERO NEGRO */}
         <BlackHole
-          position={[0, -5, -10]}
-          scale={2}
-          isActive={blackHoleActive}
-          attractionSpeed={0.5}
-          targetPosition={astronautPosition}
-          onAstronautCaptured={() => console.log('Astronaut captured by black hole!')}
-          intensity={blackHoleActive ? 2.0 : 0.5}
-          showLabel={blackHoleActive}
+          position={[0, -3, -8]}
+          stabilityScore={stabilityScore}
+          showLabel={true}
         />
 
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
+        {/* 🍪 BANNER DE COOKIES */}
+        <CookieBanner
+          position={[0, -4, 0]}
+          onConsentChange={handleConsentChange}
+        />
+
+        <OrbitControls 
+          enableZoom={true} 
+          enablePan={true} 
+          autoRotate={false} 
+          autoRotateSpeed={0.3}
+          minDistance={5}
+          maxDistance={30}
+        />
 
         <EffectComposer>
           <Bloom
-            intensity={blackHoleActive ? 2.0 : 0.8}
+            intensity={blackHoleActive ? blackHoleIntensity : Math.max(0.3, stabilityPercentage / 100)}
             luminanceThreshold={0.2}
             luminanceSmoothing={0.9}
             mipmapBlur
           />
           <Vignette
-            offset={blackHoleActive ? 0.3 : 0.5}
-            darkness={blackHoleActive ? 0.8 : 0.5}
+            offset={blackHoleActive ? 0.3 : Math.max(0.1, 0.5 - (stabilityPercentage / 200))}
+            darkness={blackHoleActive ? 0.8 : Math.max(0.1, 0.5 - (stabilityPercentage / 200))}
             blendFunction={BlendFunction.NORMAL}
           />
         </EffectComposer>

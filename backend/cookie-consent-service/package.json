@@ -1,0 +1,33 @@
+{
+  "name": "cookie-consent-service",
+  "version": "1.0.0",
+  "description": "Cookie Consent Service for GDPR-compliant cookie management",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0 <23.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "dotenv": "^17.2.3",
+    "pg": "^8.11.3",
+    "express-validator": "^7.0.1",
+    "winston": "^3.11.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "gdpr",
+    "cookies",
+    "consent",
+    "privacy",
+    "microservice"
+  ],
+  "author": "Compliance Trace Layer Team",
+  "license": "MIT"
+}

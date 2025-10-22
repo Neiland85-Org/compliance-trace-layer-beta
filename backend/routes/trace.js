@@ -27,8 +27,38 @@ let mockDB = [];
 
 router.post("/create", (req, res) => {
   const { transaction_id } = req.body;
-  const hash = crypto.createHash("sha256").update(transaction_id + Date.now()).digest("hex");
-  const record = { transaction_id, hash, status: "verified", timestamp: new Date() };
+  
+  // Validar existencia y tipo
+  if (transaction_id === undefined || transaction_id === null || typeof transaction_id !== 'string') {
+    return res.status(400).json({
+      error: "transaction_id is required and must be a string",
+      code: "INVALID_INPUT"
+    });
+  }
+  
+  // Validar longitud
+  if (transaction_id.length === 0 || transaction_id.length > 100) {
+    return res.status(400).json({
+      error: "transaction_id must be between 1 and 100 characters",
+      code: "INVALID_LENGTH",
+      received: transaction_id.length
+    });
+  }
+  
+  // Validar formato
+  if (!/^[a-zA-Z0-9_-]+$/.test(transaction_id)) {
+    return res.status(400).json({
+      error: "transaction_id contains invalid characters. Only alphanumeric, hyphens, and underscores are allowed",
+      code: "INVALID_FORMAT"
+    });
+  }
+  
+  // Sanitización
+  const sanitizedTransactionId = transaction_id.trim();
+  
+  // Lógica existente
+  const hash = crypto.createHash("sha256").update(sanitizedTransactionId + Date.now()).digest("hex");
+  const record = { transaction_id: sanitizedTransactionId, hash, status: "verified", timestamp: new Date() };
   mockDB.push(record);
   res.json(record);
 });
