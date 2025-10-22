@@ -2,10 +2,19 @@ FROM node:22-alpine
 
 WORKDIR /app
 
+# Create logs directory with proper permissions
+RUN mkdir -p logs && chown -R node:node logs
+
 COPY package*.json ./
 RUN npm ci --only=production
 
 COPY . .
+
+# Ensure node user owns all files
+RUN chown -R node:node /app
+
+# Switch to non-root user
+USER node
 
 EXPOSE 4001
 

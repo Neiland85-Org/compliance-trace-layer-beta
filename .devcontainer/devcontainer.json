@@ -1,0 +1,68 @@
+{
+  "name": "Compliance Trace Layer Development",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "api-gateway",
+  "workspaceFolder": "/workspace",
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": true
+        },
+        "javascript.preferences.quoteStyle": "single",
+        "typescript.preferences.quoteStyle": "single"
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.vscode-typescript-next",
+        "bradlc.vscode-tailwindcss",
+        "prisma.prisma",
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-pg",
+        "eamodio.gitlens"
+      ]
+    }
+  },
+
+  "forwardPorts": [4000, 4001, 4002, 5173, 5432],
+  "portsAttributes": {
+    "4000": {
+      "label": "API Gateway",
+      "onAutoForward": "notify"
+    },
+    "4001": {
+      "label": "Trace Service",
+      "onAutoForward": "silent"
+    },
+    "4002": {
+      "label": "Cookie Consent Service",
+      "onAutoForward": "silent"
+    },
+    "5173": {
+      "label": "Frontend",
+      "onAutoForward": "openBrowser"
+    },
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "silent"
+    }
+  },
+
+  "postCreateCommand": "echo 'DevContainer ready! Run: npm install in backend/ and frontend/ directories'",
+
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+
+  "remoteUser": "node"
+}
