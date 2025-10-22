@@ -1,15 +1,21 @@
 import { useState } from "react";
 import axios from "axios";
 
+const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:4000').trim().replace(/\/+$/, '');
+
 export default function Dashboard() {
   const [records, setRecords] = useState([]);
   const [co2, setCo2] = useState(0);
 
   async function createTrace() {
-    const tx = { transaction_id: "TX-" + Math.floor(Math.random() * 99999) };
-    const res = await axios.post("http://localhost:4000/api/trace/create", tx);
-    setRecords(prev => [...prev, res.data]);
-    setCo2(prev => prev + Math.floor(Math.random() * 15 + 5));
+    try {
+      const tx = { transaction_id: "TX-" + Math.floor(Math.random() * 99999) };
+      const res = await axios.post(`${API_BASE}/api/trace/create`, tx);
+      setRecords(prev => [...prev, res.data]);
+      setCo2(prev => prev + Math.floor(Math.random() * 15 + 5));
+    } catch (error) {
+      console.error('Error creating trace:', error);
+    }
   }
 
   return (
