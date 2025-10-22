@@ -86,12 +86,18 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      target: development
     container_name: compliance-trace-frontend
     ports:
       - "5173:5173"
     environment:
       VITE_API_URL: http://localhost:4000
+      VITE_MODE: development
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
     depends_on:
       api-gateway:
         condition: service_started
