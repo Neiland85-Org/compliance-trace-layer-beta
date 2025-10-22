@@ -5,7 +5,7 @@ import { useRef, useState, useEffect } from "react";
 import Astronaut from './Astronaut';
 import Satellite from './Satellite';
 import BlackHole from './BlackHole';
-import CookieBanner from './CookieBanner.jsx';
+import CookieBanner from './CookieBanner';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { BlendFunction } from 'postprocessing';
 import { usePlanetStore } from '../hooks/usePlanetStore';
@@ -129,12 +129,6 @@ export default function EarthScene() {
           showLabel={true}
         />
 
-        {/* 🍪 BANNER DE COOKIES */}
-        <CookieBanner
-          position={[0, -4, 0]}
-          onConsentChange={handleConsentChange}
-        />
-
         <OrbitControls 
           enableZoom={true} 
           enablePan={true} 
@@ -158,6 +152,9 @@ export default function EarthScene() {
           />
         </EffectComposer>
       </Canvas>
+
+      {/* 🍪 BANNER DE COOKIES - Overlay HTML */}
+      <CookieBanner onAccept={() => handleConsentChange({ accepted: true })} onReject={() => handleConsentChange({ accepted: false })} onCustomize={() => handleConsentChange({ customized: true })} />
     </div>
   );
 }
