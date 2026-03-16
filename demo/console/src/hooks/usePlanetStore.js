@@ -18,7 +18,6 @@ export const usePlanetStore = create((set, get) => ({
     set({ lastAction: { type: actionType, timestamp: Date.now() } });
   },
 
-<<<<<<< HEAD
   // Stabilization actions
   stabilizeZone: (objectId, position) => set((state) => {
     const newStabilizedZones = new Set(state.stabilizedZones);
@@ -57,8 +56,8 @@ export const usePlanetStore = create((set, get) => ({
   getStabilityPercentage: () => {
     const state = get();
     return Math.min((state.stabilizedZones.size / 2) * 100, 100);
-  }
-=======
+  },
+
   // Game state management
   gameState: 'IDLE', // 'IDLE' | 'PLAYING' | 'WIN' | 'GAME_OVER'
   astronautPosition: [5, 0, 5], // initial spawn position
@@ -179,5 +178,4 @@ export const usePlanetStore = create((set, get) => ({
     finalScore: 0,
     blackHoleActive: false
   })
->>>>>>> a2ee324 (Implement complete game mechanics with physics-based astronaut movement, rhythm pattern validation, collision detection, and comprehensive UI feedback)
 }));

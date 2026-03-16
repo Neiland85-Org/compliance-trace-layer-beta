@@ -1,9 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
+const Motion = motion;
+
 const GameOverScreen = ({ finalScore, onRestart, onMainMenu }) => {
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
@@ -29,7 +31,7 @@ const GameOverScreen = ({ finalScore, onRestart, onMainMenu }) => {
           </button>
         </div>
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };
 

@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 
+const Motion = motion;
+
 export default function HUDStatus() {
   const indicators = [
     {
@@ -20,7 +22,7 @@ export default function HUDStatus() {
   ];
 
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1 }}
@@ -37,7 +39,7 @@ export default function HUDStatus() {
       }}
     >
       {indicators.map((item, index) => (
-        <motion.div
+        <Motion.div
           key={item.label}
           className="flex items-center gap-2 px-2 sm:px-3 py-1"
           initial={{ opacity: 0 }}
@@ -47,7 +49,7 @@ export default function HUDStatus() {
           <span className="uppercase tracking-widest text-[#7cf9ff]">
             {item.label}:
           </span>
-          <motion.span
+          <Motion.span
             animate={{ opacity: [1, 0.5, 1] }}
             transition={{
               duration: 1.4 + index * 0.4,
@@ -58,9 +60,9 @@ export default function HUDStatus() {
             style={{ color: item.color }}
           >
             {item.value}
-          </motion.span>
-        </motion.div>
+          </Motion.span>
+        </Motion.div>
       ))}
-    </motion.div>
+    </Motion.div>
   );
 }

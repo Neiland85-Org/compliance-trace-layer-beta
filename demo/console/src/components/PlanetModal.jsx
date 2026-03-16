@@ -1,5 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 
+const Motion = motion;
+
 const planetData = {
   Earth: {
     name: "Earth",
@@ -37,7 +39,7 @@ export default function PlanetModal({ planet, onClose }) {
 
   return (
     <AnimatePresence>
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -45,7 +47,7 @@ export default function PlanetModal({ planet, onClose }) {
         onClick={onClose}
       >
         {/* Overlay con blur */}
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -53,7 +55,7 @@ export default function PlanetModal({ planet, onClose }) {
         />
 
         {/* Modal */}
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
@@ -66,7 +68,7 @@ export default function PlanetModal({ planet, onClose }) {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Botón de cerrar */}
-          <motion.button
+          <Motion.button
             whileHover={{ scale: 1.1, rotate: 90 }}
             whileTap={{ scale: 0.9 }}
             onClick={onClose}
@@ -78,11 +80,11 @@ export default function PlanetModal({ planet, onClose }) {
             }}
           >
             ×
-          </motion.button>
+          </Motion.button>
 
           {/* Header */}
           <div className="mb-6">
-            <motion.h2
+            <Motion.h2
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -90,19 +92,19 @@ export default function PlanetModal({ planet, onClose }) {
               style={{ color: data.color }}
             >
               {data.name} STATION
-            </motion.h2>
-            <motion.div
+            </Motion.h2>
+            <Motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
               className="text-sm text-gray-300 font-mono"
             >
               {data.description}
-            </motion.div>
+            </Motion.div>
           </div>
 
           {/* Status Badge */}
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4 }}
@@ -118,11 +120,11 @@ export default function PlanetModal({ planet, onClose }) {
             >
               STATUS: {data.status}
             </span>
-          </motion.div>
+          </Motion.div>
 
           {/* Métricas */}
           <div className="space-y-4 mb-6">
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
@@ -132,9 +134,9 @@ export default function PlanetModal({ planet, onClose }) {
               <span className="font-bold font-mono" style={{ color: data.color }}>
                 {data.co2Level} ppm
               </span>
-            </motion.div>
+            </Motion.div>
 
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6 }}
@@ -144,9 +146,9 @@ export default function PlanetModal({ planet, onClose }) {
               <span className="font-bold font-mono" style={{ color: data.color }}>
                 {data.blockchainSync}
               </span>
-            </motion.div>
+            </Motion.div>
 
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.7 }}
@@ -156,11 +158,11 @@ export default function PlanetModal({ planet, onClose }) {
               <span className="font-bold font-mono" style={{ color: data.color }}>
                 {data.environmentalScore}/100
               </span>
-            </motion.div>
+            </Motion.div>
           </div>
 
           {/* Gráfica animada */}
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
@@ -169,7 +171,7 @@ export default function PlanetModal({ planet, onClose }) {
             <div className="text-sm text-gray-300 font-mono mb-2">EMISSION SENSORS</div>
             <div className="flex items-end justify-between h-16 space-x-1">
               {[0.3, 0.7, 0.5, 0.9, 0.4, 0.8, 0.6, 0.2].map((height, index) => (
-                <motion.div
+                <Motion.div
                   key={index}
                   initial={{ height: 0 }}
                   animate={{ height: `${height * 100}%` }}
@@ -186,10 +188,10 @@ export default function PlanetModal({ planet, onClose }) {
                 />
               ))}
             </div>
-          </motion.div>
+          </Motion.div>
 
           {/* Botón de acción */}
-          <motion.button
+          <Motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2 }}
@@ -206,9 +208,9 @@ export default function PlanetModal({ planet, onClose }) {
             }}
           >
             DEPLOY CAPTURE PROTOCOL
-          </motion.button>
-        </motion.div>
-      </motion.div>
+          </Motion.button>
+        </Motion.div>
+      </Motion.div>
     </AnimatePresence>
   );
 }

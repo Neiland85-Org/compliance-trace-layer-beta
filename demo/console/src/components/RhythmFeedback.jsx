@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
 
+const Motion = motion;
+
 export default function RhythmFeedback({
   isPatternValid,
   patternScore,
@@ -16,20 +18,19 @@ export default function RhythmFeedback({
   const strokeDashoffset = circumference - (scorePercentage / 100) * circumference;
 
   return (
-    <motion.div
+    <Motion.div
       className="fixed top-4 right-4 z-40 pointer-events-none"
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
     >
       {/* Pattern Status Indicator */}
-      <motion.div
-        className={`bg-black/60 backdrop-blur-xl border rounded-2xl p-4 mb-2 ${
-          isPatternValid === true
+      <Motion.div
+        className={`bg-black/60 backdrop-blur-xl border rounded-2xl p-4 mb-2 ${isPatternValid === true
             ? 'border-green-500/50 shadow-[0_0_20px_rgba(0,255,178,0.3)]'
             : isPatternValid === false
-            ? 'border-red-500/50 shadow-[0_0_20px_rgba(255,0,0,0.3)]'
-            : 'border-gray-500/30'
-        }`}
+              ? 'border-red-500/50 shadow-[0_0_20px_rgba(255,0,0,0.3)]'
+              : 'border-gray-500/30'
+          }`}
         animate={isPatternValid === true ? { scale: [1, 1.1, 1] } : { scale: 1 }}
         transition={{ duration: 0.3 }}
         role="status"
@@ -40,12 +41,11 @@ export default function RhythmFeedback({
             {isPatternValid === true ? '✓' : isPatternValid === false ? '✗' : '○'}
           </div>
           <div className="flex-1">
-            <div className={`text-sm font-bold ${
-              isPatternValid === true ? 'text-green-400' :
-              isPatternValid === false ? 'text-red-400' : 'text-gray-400'
-            }`}>
+            <div className={`text-sm font-bold ${isPatternValid === true ? 'text-green-400' :
+                isPatternValid === false ? 'text-red-400' : 'text-gray-400'
+              }`}>
               {isPatternValid === true ? 'PATRÓN VÁLIDO' :
-               isPatternValid === false ? 'PATRÓN INVÁLIDO' : 'ESPERANDO PATRÓN'}
+                isPatternValid === false ? 'PATRÓN INVÁLIDO' : 'ESPERANDO PATRÓN'}
             </div>
             <div className="text-xs text-gray-300">
               Precisión: {scorePercentage}%
@@ -64,7 +64,7 @@ export default function RhythmFeedback({
                 fill="transparent"
                 className="text-gray-600"
               />
-              <motion.circle
+              <Motion.circle
                 cx="35"
                 cy="35"
                 r={radius}
@@ -77,7 +77,7 @@ export default function RhythmFeedback({
                 transition={{ duration: 0.5 }}
                 className={
                   scorePercentage >= 80 ? 'text-green-400' :
-                  scorePercentage >= 60 ? 'text-yellow-400' : 'text-red-400'
+                    scorePercentage >= 60 ? 'text-yellow-400' : 'text-red-400'
                 }
               />
             </svg>
@@ -86,11 +86,11 @@ export default function RhythmFeedback({
             </div>
           </div>
         </div>
-      </motion.div>
+      </Motion.div>
 
       {/* Streak Counter */}
       {streak > 0 && (
-        <motion.div
+        <Motion.div
           className="bg-gradient-to-r from-cyan-500/20 to-green-500/20 border border-cyan-500/50 rounded-xl p-3 mb-2"
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -102,19 +102,18 @@ export default function RhythmFeedback({
             <div className="text-xs text-cyan-400">RACHA</div>
             <div className="text-xs text-cyan-500">×{streak}</div>
           </div>
-        </motion.div>
+        </Motion.div>
       )}
 
       {/* Failure Warning */}
       {failureCount > 0 && (
-        <motion.div
-          className={`border rounded-xl p-3 ${
-            failureCount >= 3
+        <Motion.div
+          className={`border rounded-xl p-3 ${failureCount >= 3
               ? 'bg-red-900/30 border-red-500/50'
               : failureCount === 2
-              ? 'bg-orange-900/30 border-orange-500/50'
-              : 'bg-yellow-900/30 border-yellow-500/50'
-          }`}
+                ? 'bg-orange-900/30 border-orange-500/50'
+                : 'bg-yellow-900/30 border-yellow-500/50'
+            }`}
           animate={failureCount > 0 ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
           transition={{ duration: 0.4 }}
         >
@@ -126,26 +125,25 @@ export default function RhythmFeedback({
               </div>
               <div className="text-xs text-gray-300">
                 {failureCount >= 3 ? '¡AGUJERO NEGRO ACTIVADO!' :
-                 failureCount === 2 ? '¡Peligro inminente!' : 'Cuidado...'}
+                  failureCount === 2 ? '¡Peligro inminente!' : 'Cuidado...'}
               </div>
             </div>
           </div>
 
           {/* Danger Progress Bar */}
           <div className="mt-2 w-full bg-gray-700 rounded-full h-2">
-            <motion.div
-              className={`h-2 rounded-full ${
-                failureCount >= 3 ? 'bg-red-500' :
-                failureCount === 2 ? 'bg-orange-500' : 'bg-yellow-500'
-              }`}
+            <Motion.div
+              className={`h-2 rounded-full ${failureCount >= 3 ? 'bg-red-500' :
+                  failureCount === 2 ? 'bg-orange-500' : 'bg-yellow-500'
+                }`}
               initial={{ width: 0 }}
               animate={{ width: `${(failureCount / 3) * 100}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
-        </motion.div>
+        </Motion.div>
       )}
-    </motion.div>
+    </Motion.div>
   );
 }
 
