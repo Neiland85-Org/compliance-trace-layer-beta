@@ -1,0 +1,14 @@
+{
+  "name": "compliance-trace-layer-beta",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "backend": "node core/trace-engine/server.js",
+    "frontend": "npm --prefix demo/console run dev",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "frontend:install": "npm --prefix demo/console install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
