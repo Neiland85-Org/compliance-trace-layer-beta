@@ -1,12 +1,33 @@
+import { useState } from "react"
+
 import Layout from "./components/Layout"
-import Catalog from "./features/catalog/Catalog"
 import ActivityPanel from "./components/ActivityPanel"
 
+import Hero from "./components/Hero"
+import SearchBar from "./components/SearchBar"
+import Categories from "./components/Categories"
+
+import Catalog from "./features/catalog/Catalog"
+import ArchitectureDetail from "./features/architecture/ArchitectureDetail"
+
 export default function App(){
+
+  const [search,setSearch] = useState("")
+  const [category,setCategory] = useState("All")
+  const [selected,setSelected] = useState(null)
 
   return (
 
     <Layout>
+
+      <Hero/>
+
+      {!selected && (
+        <>
+          <SearchBar onSearch={setSearch}/>
+          <Categories onSelect={setCategory}/>
+        </>
+      )}
 
       <div style={{
         display:"grid",
@@ -16,13 +37,20 @@ export default function App(){
 
         <div>
 
-          <h2 style={{
-            marginBottom:"24px"
-          }}>
-            Architecture Marketplace
-          </h2>
+          {!selected && (
+            <Catalog
+              search={search}
+              category={category}
+              onSelect={setSelected}
+            />
+          )}
 
-          <Catalog/>
+          {selected && (
+            <ArchitectureDetail
+              arch={selected}
+              onBack={()=>setSelected(null)}
+            />
+          )}
 
         </div>
 
@@ -30,13 +58,8 @@ export default function App(){
           borderLeft:"1px solid #00FFB2",
           paddingLeft:"24px"
         }}>
-
-          <h3 style={{marginBottom:"12px"}}>
-            Trace Engine Activity
-          </h3>
-
+          <h3>Trace Engine Activity</h3>
           <ActivityPanel/>
-
         </div>
 
       </div>

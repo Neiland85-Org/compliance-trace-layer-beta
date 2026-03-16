@@ -1,0 +1,10 @@
+{
+  "id": "trace-consent-service",
+  "name": "trace-consent-service",
+  "description": "New architecture",
+  "category": "Infrastructure",
+  "stack": [],
+  "deploy": {
+    "type": "service"
+  }
+}

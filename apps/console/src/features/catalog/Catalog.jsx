@@ -1,40 +1,40 @@
-import { useEffect, useState } from "react";
-import ArchitectureCard from "./ArchitectureCard";
+import ArchitectureCard from "./ArchitectureCard"
+import { useCatalog } from "../../hooks/useCatalog"
 
-export default function Catalog() {
-  const [items, setItems] = useState([]);
+export default function Catalog({search,category,onSelect}){
 
-  useEffect(() => {
-    fetch("http://localhost:4000/catalog")
-      .then(r => r.json())
-      .then(setItems)
-      .catch(() => {
-        setItems([
-          {
-            id: 1,
-            name: "Trace Compliance API",
-            description: "GDPR / cookie compliance backend service",
-            stack: ["Node", "Postgres", "Trace Engine"]
-          },
-          {
-            id: 2,
-            name: "Consent Ledger",
-            description: "Event sourced consent storage",
-            stack: ["NATS", "EventStore"]
-          }
-        ]);
-      });
-  }, []);
+  const { catalog, loading } = useCatalog()
+
+  if(loading){
+    return <div>Loading architectures...</div>
+  }
+
+  const filtered = catalog.filter(a=>{
+
+    const matchesSearch =
+      !search ||
+      a.name.toLowerCase().includes(search.toLowerCase())
+
+    const matchesCategory =
+      !category || category==="All" || a.category===category
+
+    return matchesSearch && matchesCategory
+  })
 
   return (
     <div style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fill,280px)",
-      gap: "24px"
+      display:"grid",
+      gridTemplateColumns:"repeat(auto-fill,280px)",
+      gap:"24px"
     }}>
-      {items.map(a => (
-        <ArchitectureCard key={a.id} arch={a} />
+      {filtered.map(a=>(
+        <ArchitectureCard
+          key={a.id}
+          arch={a}
+          onSelect={onSelect}
+        />
       ))}
     </div>
-  );
+  )
+
 }

@@ -1,0 +1,11 @@
+{
+  "id": "trace-compliance-api",
+  "name": "Trace Compliance API",
+  "description": "GDPR cookie compliance and consent trace backend",
+  "category": "Compliance",
+  "stack": ["Node","Postgres","Redis"],
+  "deploy": {
+    "type": "docker",
+    "entry": "apps/api"
+  }
+}

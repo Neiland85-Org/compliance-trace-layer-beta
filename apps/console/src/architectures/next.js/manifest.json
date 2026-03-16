@@ -1,0 +1,13 @@
+{
+  "id": "next.js",
+  "name": "next.js",
+  "description": "The React Framework",
+  "category": "Imported",
+  "stack": [
+    "Node"
+  ],
+  "repo": "https://github.com/vercel/next.js",
+  "deploy": {
+    "type": "service"
+  }
+}
