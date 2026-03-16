@@ -11,5 +11,8 @@
     "frontend": "npm run dev -w apps/console",
     "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
     "install:all": "npm install && npm install -w apps/console"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
