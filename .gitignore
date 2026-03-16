@@ -140,3 +140,7 @@ vite.config.ts.timestamp-*
 .vscode/
 .vscode/
 .vscode/
+node_modules/
+dist/
+.env
+.DS_Store
