@@ -26,5 +26,12 @@
     "url": "http://localhost:8081",
     "image": "nginx",
     "created": "2026-03-17T00:42:01.405Z"
+  },
+  {
+    "name": "trace-test-8081",
+    "port": 8081,
+    "url": "http://localhost:8081",
+    "image": "nginx",
+    "created": "2026-03-17T01:03:04.303Z"
   }
 ]
