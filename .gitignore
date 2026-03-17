@@ -144,3 +144,24 @@ node_modules/
 dist/
 .env
 .DS_Store
+
+# Engine state (SQLite)
+engine/data/
+*.db
+*.db-journal
+*.db-wal
+
+# Contract build output
+contracts/dist/
+
+# TypeScript build caches
+*.tsbuildinfo
+
+# CLI pipeline output
+.trace-output/
+
+# Test output
+.test-delivery-output/
+
+# Local package registry
+.trace-registry/

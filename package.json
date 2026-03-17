@@ -4,15 +4,35 @@
   "type": "module",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "contracts",
+    "engine",
+    "intelligence",
+    "delivery"
   ],
   "scripts": {
-    "trace": "node tools/trace-cli/trace.js",
-    "deploy-engine": "node tools/deploy-engine/server.js",
-    "dev": "npm run dev -w apps/console"
+    "trace": "node --import tsx tools/trace-cli/trace.js",
+    "trace:intake": "node --import tsx tools/trace-cli/trace.js intake",
+    "trace:analyze": "node --import tsx tools/trace-cli/trace.js analyze",
+    "trace:propose": "node --import tsx tools/trace-cli/trace.js propose",
+    "trace:pipeline": "node --import tsx tools/trace-cli/trace.js pipeline",
+    "trace:deliver": "node --import tsx tools/trace-cli/trace.js deliver",
+    "trace:templates": "node --import tsx tools/trace-cli/trace.js templates",
+    "engine": "npm start -w engine",
+    "engine:dev": "npm run dev -w engine",
+    "dev": "npm run dev -w apps/console",
+    "validate:contracts": "npm run validate -w contracts",
+    "validate:intelligence": "npm run validate -w intelligence",
+    "test:contracts": "npm test -w contracts",
+    "test:intelligence": "npm test -w intelligence",
+    "test:delivery": "npm test -w delivery",
+    "validate:delivery": "npm run validate -w delivery",
+    "test:all": "npm run test:contracts && npm run test:intelligence && npm run test:delivery",
+    "validate:all": "npm run validate:contracts && npm run validate:intelligence && npm run validate:delivery"
   },
   "dependencies": {
+    "ajv": "^8.18.0",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1",
     "get-port": "^7.1.0"
   }
 }

@@ -1,0 +1,31 @@
+{
+  "name": "@trace/contracts",
+  "version": "1.0.0",
+  "description": "Shared domain contracts for Trace Platform — TypeScript interfaces + Zod schemas",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./intake-analysis": "./dist/intake-analysis/index.js",
+    "./analysis-proposal": "./dist/analysis-proposal/index.js",
+    "./proposal-manifest": "./dist/proposal-manifest/index.js",
+    "./manifest-deployment": "./dist/manifest-deployment/index.js",
+    "./proposal-delivery": "./dist/proposal-delivery/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "validate": "tsc --noEmit",
+    "test": "node --import tsx test/validate-schemas.ts"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "tsx": "^4.19.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
