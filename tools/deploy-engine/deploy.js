@@ -7,11 +7,8 @@ const REGISTRY = path.resolve("tools/deploy-engine/registry/services.json")
 let port = 8081
 
 function loadRegistry(){
-  try{
-    return JSON.parse(fs.readFileSync(REGISTRY))
-  }catch{
-    return []
-  }
+  try { return JSON.parse(fs.readFileSync(REGISTRY)) }
+  catch { return [] }
 }
 
 function saveRegistry(data){
@@ -19,36 +16,27 @@ function saveRegistry(data){
 }
 
 export function deployContainer(name,image){
-
   return new Promise((resolve,reject)=>{
 
     const assignedPort = port++
     const containerName = `${name}-${assignedPort}`
 
     const args = [
-      "run",
-      "-d",
-      "--name",
-      containerName,
-      "-p",
-      `${assignedPort}:80`,
+      "run","-d",
+      "--name",containerName,
+      "-p",`${assignedPort}:80`,
       image
     ]
-
-    console.log("docker",args.join(" "))
 
     const proc = spawn("docker",args)
 
     let err=""
 
-    proc.stderr.on("data",(d)=>{
-      err += d.toString()
-    })
+    proc.stderr.on("data",d=> err+=d.toString())
 
-    proc.on("close",(code)=>{
+    proc.on("close",code=>{
 
-      if(code !== 0){
-        console.error("deploy failed:",err)
+      if(code!==0){
         return reject(err)
       }
 
@@ -60,14 +48,13 @@ export function deployContainer(name,image){
         created:new Date().toISOString()
       }
 
-      const registry = loadRegistry()
+      const registry = loadRegistry().filter(s=>s.name!==containerName)
       registry.push(service)
+
       saveRegistry(registry)
 
       resolve(service)
 
     })
-
   })
-
 }
