@@ -1,6 +1,7 @@
 import express from "express"
 import fs from "fs"
 import path from "path"
+import rateLimit from "express-rate-limit"
 
 import { deployContainer } from "./deploy.js"
 import { stopContainer } from "./control.js"
@@ -10,15 +11,47 @@ const app = express()
 
 const REGISTRY = path.resolve("tools/deploy-engine/registry/services.json")
 
+/*
+SECURITY
+*/
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false
+})
+
+const ALLOWED_IMAGES = [
+  "nginx",
+  "node:20",
+  "postgres:16"
+]
+
 app.use(express.json())
+app.use(limiter)
 
 /*
 DEPLOY SINGLE CONTAINER
 */
+
 app.post("/deploy", async (req,res)=>{
+
   try{
 
     const { name,image } = req.body
+
+    if(!name || !image){
+      return res.status(400).json({error:"missing parameters"})
+    }
+
+    if(!/^[a-zA-Z0-9_-]+$/.test(name)){
+      return res.status(400).json({error:"invalid container name"})
+    }
+
+    if(!ALLOWED_IMAGES.includes(image)){
+      return res.status(400).json({error:"image not allowed"})
+    }
 
     const result = await deployContainer(name,image)
 
@@ -34,16 +67,22 @@ app.post("/deploy", async (req,res)=>{
 
     res.status(500).json({status:"deploy-failed"})
   }
+
 })
 
 /*
 DEPLOY STACK MANIFEST
 */
+
 app.post("/deploy-manifest", async (req,res)=>{
 
   try{
 
     const { path:manifestPath } = req.body
+
+    if(!manifestPath){
+      return res.status(400).json({error:"manifest path required"})
+    }
 
     const result = await deployManifest(manifestPath)
 
@@ -58,16 +97,24 @@ app.post("/deploy-manifest", async (req,res)=>{
 
     res.status(500).json({status:"manifest-error"})
   }
+
 })
 
 /*
 REMOVE SERVICE
 */
+
 app.delete("/service/:name", async (req,res)=>{
 
   try{
 
-    await stopContainer(req.params.name)
+    const name = req.params.name
+
+    if(!/^[a-zA-Z0-9_-]+$/.test(name)){
+      return res.status(400).json({error:"invalid container name"})
+    }
+
+    await stopContainer(name)
 
     res.json({status:"removed"})
 
@@ -77,11 +124,13 @@ app.delete("/service/:name", async (req,res)=>{
 
     res.status(500).json({status:"error"})
   }
+
 })
 
 /*
 LIST SERVICES
 */
+
 app.get("/services",(req,res)=>{
 
   try{
@@ -93,12 +142,15 @@ app.get("/services",(req,res)=>{
   }catch{
 
     res.json([])
+
   }
+
 })
 
 /*
 METRICS
 */
+
 app.get("/metrics",(req,res)=>{
 
   res.json({
@@ -111,6 +163,7 @@ app.get("/metrics",(req,res)=>{
 /*
 ACTIVITY
 */
+
 app.get("/activity",(req,res)=>{
 
   res.json({
