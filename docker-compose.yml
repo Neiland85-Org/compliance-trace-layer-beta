@@ -5,9 +5,22 @@ services:
     working_dir: /app
     volumes:
       - .:/app
-    command: node packages/trace-engine/server.js
+    command: node backend/server.js
     ports:
       - "4000:4000"
+    env_file:
+      - backend/.env.example
+
+  engine:
+    image: node:22
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: node engine/api/server.ts
+    ports:
+      - "4010:4010"
+    depends_on:
+      - backend
 
   frontend:
     image: node:22
