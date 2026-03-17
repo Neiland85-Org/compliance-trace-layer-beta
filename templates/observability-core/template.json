@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1-0-0",
+  "templateId": "observability-core",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Trace Observability Core",
+    "description": "Metrics and compliance monitoring pipeline with structured logging",
+    "category": "observability",
+    "tags": ["metrics", "logging", "monitoring", "observability", "node"],
+    "author": "Neil Muñoz Lago",
+    "createdAt": "2025-01-01T00:00:00Z",
+    "updatedAt": "2026-03-17T00:00:00Z"
+  },
+  "topology": {
+    "services": [
+      {
+        "name": "metrics-collector",
+        "image": "node:22",
+        "port": 9090,
+        "env": {
+          "NODE_ENV": "${NODE_ENV}",
+          "LOG_FORMAT": "${LOG_FORMAT}",
+          "METRICS_INTERVAL": "${METRICS_INTERVAL}"
+        },
+        "healthCheck": { "path": "/health", "interval": "15s", "timeout": "5s" }
+      },
+      {
+        "name": "log-aggregator",
+        "image": "node:22",
+        "port": 9091,
+        "env": {
+          "NODE_ENV": "${NODE_ENV}",
+          "LOG_FORMAT": "${LOG_FORMAT}"
+        }
+      }
+    ],
+    "networks": [],
+    "volumes": []
+  },
+  "contracts": [
+    {
+      "consumer": "log-aggregator",
+      "provider": "metrics-collector",
+      "protocol": "http",
+      "port": 9090,
+      "healthEndpoint": "/health"
+    }
+  ],
+  "parameters": [
+    { "key": "NODE_ENV", "type": "enum", "enumValues": ["development","production"], "default": "production", "description": "Environment", "required": true },
+    { "key": "LOG_FORMAT", "type": "enum", "enumValues": ["json","text","structured"], "default": "json", "description": "Log output format", "required": false },
+    { "key": "METRICS_INTERVAL", "type": "string", "default": "30000", "description": "Metrics collection interval (ms)", "required": false }
+  ]
+}

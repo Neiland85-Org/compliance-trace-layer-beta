@@ -1,0 +1,13 @@
+{
+  "name": "production",
+  "description": "Production-hardened with resource limits",
+  "values": {
+    "NODE_ENV": "production",
+    "DB_HOST": "db",
+    "DB_NAME": "compliance_trace",
+    "DB_USER": "postgres",
+    "DB_PASSWORD": "",
+    "ALLOWED_ORIGINS": "",
+    "LOG_LEVEL": "info"
+  }
+}

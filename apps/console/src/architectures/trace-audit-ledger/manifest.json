@@ -1,0 +1,11 @@
+{
+  "id": "trace-audit-ledger",
+  "name": "Trace Audit Ledger",
+  "description": "Immutable audit log for compliance events",
+  "category": "Compliance",
+  "stack": ["Node","Postgres","EventLog"],
+  "deploy": {
+    "type": "service",
+    "entry": "audit-ledger"
+  }
+}

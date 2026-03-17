@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "1-0-0",
+  "templateId": "compliance-api",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Trace Compliance API",
+    "description": "GDPR cookie compliance backend with trace layer and PostgreSQL persistence",
+    "category": "compliance",
+    "tags": ["gdpr", "compliance", "trace", "postgres", "node", "express"],
+    "author": "Neil Muñoz Lago",
+    "createdAt": "2025-01-01T00:00:00Z",
+    "updatedAt": "2026-03-17T00:00:00Z"
+  },
+  "topology": {
+    "services": [
+      {
+        "name": "api-gateway",
+        "image": "node:22",
+        "port": 4000,
+        "env": {
+          "NODE_ENV": "${NODE_ENV}",
+          "PORT": "4000",
+          "DATABASE_URL": "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}",
+          "ALLOWED_ORIGINS": "${ALLOWED_ORIGINS}",
+          "LOG_LEVEL": "${LOG_LEVEL}"
+        },
+        "healthCheck": {
+          "path": "/health",
+          "interval": "30s",
+          "timeout": "10s"
+        },
+        "dependsOn": ["db"]
+      },
+      {
+        "name": "trace-service",
+        "image": "node:22",
+        "port": 4001,
+        "env": {
+          "NODE_ENV": "${NODE_ENV}",
+          "PORT": "4001",
+          "DATABASE_URL": "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}",
+          "LOG_LEVEL": "${LOG_LEVEL}"
+        },
+        "dependsOn": ["db"]
+      },
+      {
+        "name": "db",
+        "image": "postgres:16",
+        "port": 5432,
+        "env": {
+          "POSTGRES_DB": "${DB_NAME}",
+          "POSTGRES_USER": "${DB_USER}",
+          "POSTGRES_PASSWORD": "${DB_PASSWORD}"
+        },
+        "healthCheck": {
+          "path": "pg_isready",
+          "interval": "30s",
+          "timeout": "10s"
+        }
+      }
+    ],
+    "networks": [
+      {
+        "name": "compliance-network",
+        "driver": "bridge",
+        "internal": false
+      }
+    ],
+    "volumes": [
+      {
+        "name": "postgres-data",
+        "driver": "local",
+        "mountPath": "/var/lib/postgresql/data",
+        "service": "db"
+      }
+    ]
+  },
+  "contracts": [
+    {
+      "consumer": "api-gateway",
+      "provider": "trace-service",
+      "protocol": "http",
+      "port": 4001,
+      "healthEndpoint": "/health"
+    },
+    {
+      "consumer": "api-gateway",
+      "provider": "db",
+      "protocol": "tcp",
+      "port": 5432
+    },
+    {
+      "consumer": "trace-service",
+      "provider": "db",
+      "protocol": "tcp",
+      "port": 5432
+    }
+  ],
+  "parameters": [
+    {
+      "key": "NODE_ENV",
+      "type": "enum",
+      "enumValues": ["development", "production", "staging"],
+      "default": "production",
+      "description": "Node.js environment",
+      "required": true
+    },
+    {
+      "key": "DB_HOST",
+      "type": "string",
+      "default": "db",
+      "description": "PostgreSQL host (service name in compose)",
+      "required": true
+    },
+    {
+      "key": "DB_NAME",
+      "type": "string",
+      "default": "compliance_trace",
+      "description": "PostgreSQL database name",
+      "required": true
+    },
+    {
+      "key": "DB_USER",
+      "type": "string",
+      "default": "postgres",
+      "description": "PostgreSQL user",
+      "required": true
+    },
+    {
+      "key": "DB_PASSWORD",
+      "type": "string",
+      "default": "",
+      "description": "PostgreSQL password (MUST be set in production)",
+      "required": true
+    },
+    {
+      "key": "ALLOWED_ORIGINS",
+      "type": "string",
+      "default": "http://localhost:5173",
+      "description": "Comma-separated CORS origins",
+      "required": false
+    },
+    {
+      "key": "LOG_LEVEL",
+      "type": "enum",
+      "enumValues": ["debug", "info", "warn", "error"],
+      "default": "info",
+      "description": "Logging verbosity",
+      "required": false
+    }
+  ]
+}

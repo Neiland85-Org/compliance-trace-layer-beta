@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1-0-0",
+  "templateId": "consent-service",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Trace Consent Service",
+    "description": "Cookie consent management service for regulatory compliance (GDPR, ePrivacy)",
+    "category": "compliance",
+    "tags": ["consent", "cookies", "gdpr", "eprivacy", "compliance"],
+    "author": "Neil Muñoz Lago",
+    "createdAt": "2025-01-01T00:00:00Z",
+    "updatedAt": "2026-03-17T00:00:00Z"
+  },
+  "topology": {
+    "services": [
+      {
+        "name": "consent-api",
+        "image": "node:22",
+        "port": 4002,
+        "env": {
+          "NODE_ENV": "${NODE_ENV}",
+          "DATABASE_URL": "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}",
+          "CONSENT_VERSION": "${CONSENT_VERSION}",
+          "CONSENT_EXPIRY_MONTHS": "${CONSENT_EXPIRY_MONTHS}"
+        },
+        "healthCheck": { "path": "/health", "interval": "30s", "timeout": "10s" },
+        "dependsOn": ["consent-db"]
+      },
+      {
+        "name": "consent-db",
+        "image": "postgres:16",
+        "port": 5434,
+        "env": {
+          "POSTGRES_DB": "${DB_NAME}",
+          "POSTGRES_USER": "${DB_USER}",
+          "POSTGRES_PASSWORD": "${DB_PASSWORD}"
+        }
+      }
+    ],
+    "networks": [],
+    "volumes": [
+      { "name": "consent-data", "driver": "local", "mountPath": "/var/lib/postgresql/data", "service": "consent-db" }
+    ]
+  },
+  "contracts": [
+    { "consumer": "consent-api", "provider": "consent-db", "protocol": "tcp", "port": 5434 }
+  ],
+  "parameters": [
+    { "key": "NODE_ENV", "type": "enum", "enumValues": ["development","production"], "default": "production", "description": "Environment", "required": true },
+    { "key": "DB_HOST", "type": "string", "default": "consent-db", "description": "PostgreSQL host", "required": true },
+    { "key": "DB_NAME", "type": "string", "default": "consent_service", "description": "Database name", "required": true },
+    { "key": "DB_USER", "type": "string", "default": "postgres", "description": "Database user", "required": true },
+    { "key": "DB_PASSWORD", "type": "string", "default": "", "description": "Database password", "required": true },
+    { "key": "CONSENT_VERSION", "type": "string", "default": "1.0.0", "description": "Consent policy version", "required": false },
+    { "key": "CONSENT_EXPIRY_MONTHS", "type": "number", "default": 12, "description": "Months until consent expires", "required": false }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "trace-compliance-api",
+  "services": [
+    {
+      "name": "api",
+      "image": "node:20",
+      "port": 3000
+    },
+    {
+      "name": "db",
+      "image": "postgres:16",
+      "port": 5432
+    }
+  ]
+}

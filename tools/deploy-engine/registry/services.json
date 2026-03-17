@@ -1,0 +1,16 @@
+[
+  {
+    "name": "test-stack-web-50375",
+    "port": 50375,
+    "url": "http://localhost:50375",
+    "image": "nginx",
+    "created": "2026-03-17T10:05:44.150Z"
+  },
+  {
+    "name": "test-stack-web2-50377",
+    "port": 50377,
+    "url": "http://localhost:50377",
+    "image": "nginx",
+    "created": "2026-03-17T10:05:44.563Z"
+  }
+]

@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1-0-0",
+  "templateId": "audit-ledger",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Trace Audit Ledger",
+    "description": "Immutable audit log for compliance events with SHA-256 integrity proofs",
+    "category": "compliance",
+    "tags": ["audit", "immutable", "ledger", "sha256", "compliance", "postgres"],
+    "author": "Neil Muñoz Lago",
+    "createdAt": "2025-01-01T00:00:00Z",
+    "updatedAt": "2026-03-17T00:00:00Z"
+  },
+  "topology": {
+    "services": [
+      {
+        "name": "audit-api",
+        "image": "node:22",
+        "port": 4003,
+        "env": {
+          "NODE_ENV": "${NODE_ENV}",
+          "DATABASE_URL": "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}",
+          "LOG_LEVEL": "${LOG_LEVEL}"
+        },
+        "healthCheck": { "path": "/health", "interval": "30s", "timeout": "10s" },
+        "dependsOn": ["ledger-db"]
+      },
+      {
+        "name": "ledger-db",
+        "image": "postgres:16",
+        "port": 5433,
+        "env": {
+          "POSTGRES_DB": "${DB_NAME}",
+          "POSTGRES_USER": "${DB_USER}",
+          "POSTGRES_PASSWORD": "${DB_PASSWORD}"
+        }
+      }
+    ],
+    "networks": [],
+    "volumes": [
+      { "name": "ledger-data", "driver": "local", "mountPath": "/var/lib/postgresql/data", "service": "ledger-db" }
+    ]
+  },
+  "contracts": [
+    { "consumer": "audit-api", "provider": "ledger-db", "protocol": "tcp", "port": 5433 }
+  ],
+  "parameters": [
+    { "key": "NODE_ENV", "type": "enum", "enumValues": ["development","production"], "default": "production", "description": "Environment", "required": true },
+    { "key": "DB_HOST", "type": "string", "default": "ledger-db", "description": "PostgreSQL host", "required": true },
+    { "key": "DB_NAME", "type": "string", "default": "audit_ledger", "description": "Database name", "required": true },
+    { "key": "DB_USER", "type": "string", "default": "postgres", "description": "Database user", "required": true },
+    { "key": "DB_PASSWORD", "type": "string", "default": "", "description": "Database password", "required": true },
+    { "key": "LOG_LEVEL", "type": "enum", "enumValues": ["debug","info","warn","error"], "default": "info", "description": "Log level", "required": false }
+  ]
+}

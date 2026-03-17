@@ -1,0 +1,28 @@
+{
+  "name": "@trace/engine",
+  "version": "1.0.0",
+  "description": "Trace Platform — Deploy engine runtime (open-core)",
+  "type": "module",
+  "main": "api/server.ts",
+  "scripts": {
+    "start": "node --import tsx api/server.ts",
+    "dev": "node --import tsx --watch api/server.ts",
+    "validate": "tsc --noEmit"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1",
+    "get-port": "^7.1.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/express": "^5.0.0",
+    "typescript": "^5.5.0",
+    "tsx": "^4.19.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
