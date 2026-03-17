@@ -16,6 +16,7 @@
     "trace:propose": "node --import tsx tools/trace-cli/trace.js propose",
     "trace:pipeline": "node --import tsx tools/trace-cli/trace.js pipeline",
     "trace:deliver": "node --import tsx tools/trace-cli/trace.js deliver",
+    "trace:publish": "node --import tsx tools/trace-cli/trace.js publish",
     "trace:templates": "node --import tsx tools/trace-cli/trace.js templates",
     "engine": "npm start -w engine",
     "engine:dev": "npm run dev -w engine",

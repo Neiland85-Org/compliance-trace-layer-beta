@@ -1,43 +1,28 @@
 import { useEffect, useState } from "react"
 import { fetchCatalog } from "../services/catalogService"
 
-export function useCatalog(){
+export function useCatalog() {
 
-  const [catalog,setCatalog] = useState([])
-  const [loading,setLoading] = useState(true)
+  const [catalog, setCatalog] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  useEffect(()=>{
+  useEffect(() => {
 
     fetchCatalog()
-      .then(data=>{
+      .then(data => {
         setCatalog(data)
         setLoading(false)
       })
-      .catch(()=>{
-
-        setCatalog([
-          {
-            id:1,
-            name:"Trace Compliance API",
-            description:"GDPR cookie compliance backend",
-            stack:["Node","Postgres"],
-            category:"Compliance"
-          },
-          {
-            id:2,
-            name:"Event Stream Pipeline",
-            description:"Distributed event processing system",
-            stack:["NATS","Workers"],
-            category:"Event Systems"
-          }
-        ])
-
+      .catch(err => {
+        console.warn("[useCatalog] Failed to fetch:", err.message)
+        setError("Engine unreachable — start with: npm run engine")
+        setCatalog([])
         setLoading(false)
-
       })
 
-  },[])
+  }, [])
 
-  return { catalog, loading }
+  return { catalog, loading, error }
 
 }

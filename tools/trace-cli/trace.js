@@ -154,7 +154,8 @@ async function cmdIntake(targetPath) {
 
   if (isUrl) {
     console.log(`[intake] Fetching from GitHub: ${targetPath}`);
-    rawData = await intake.fetchGitHubRepo(targetPath);
+    const ghToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+    rawData = await intake.fetchGitHubRepo(targetPath, ghToken);
   } else {
     const resolved = path.resolve(targetPath);
     console.log(`[intake] Scanning local path: ${resolved}`);
@@ -428,6 +429,70 @@ async function cmdDeliver(templateId) {
   return envelope;
 }
 
+async function cmdPublish(envelopePath) {
+  if (!envelopePath) {
+    console.error("Usage: trace publish <envelope.trace.json>");
+    console.error("  Or:  trace publish <template-id> [--tier free|starter|professional|enterprise]");
+    process.exit(1);
+  }
+
+  printHeader("PUBLISH — Registry Upload");
+  const start = Date.now();
+
+  const delivery = await loadDelivery();
+  const registryPath = path.join(ROOT, ".trace-registry");
+
+  let envelope;
+
+  // If it's a file path, load the envelope directly
+  if (fs.existsSync(path.resolve(envelopePath))) {
+    console.log(`[publish] Loading envelope from ${envelopePath}...`);
+    const { loadEnvelope } = await import(`${ROOT}/delivery/distribution/exporter.js`);
+    envelope = loadEnvelope(path.resolve(envelopePath));
+  } else {
+    // Treat as template-id: build → license → seal on the fly
+    console.log(`[publish] Building package for ${envelopePath}...`);
+    const templateDir = path.join(ROOT, "templates", envelopePath);
+    if (!fs.existsSync(templateDir)) {
+      console.error(`[error] Template not found: ${envelopePath}`);
+      process.exit(1);
+    }
+    const { package: pkg } = delivery.buildPackage(templateDir, {
+      licenseTier: LICENSE_TIER,
+      author: "Neil Muñoz Lago",
+    });
+    const grant = delivery.createLicenseGrant(LICENSE_TIER, LICENSEE, LICENSE_TIER === "free" ? undefined : 365);
+    envelope = delivery.createEnvelope(pkg, grant);
+  }
+
+  // Verify seal before publishing
+  const sealCheck = delivery.verifySeal(envelope);
+  if (!sealCheck.valid) {
+    console.error("[publish] FATAL: Seal verification failed — envelope may be tampered");
+    process.exit(1);
+  }
+  console.log(`[publish] Seal verified`);
+
+  // Publish to local registry
+  const entry = delivery.publishLocal(envelope, registryPath);
+
+  const elapsed = Date.now() - start;
+
+  if (FORMAT === "json") {
+    printJson(entry);
+  } else {
+    console.log(`[publish] ────────────────────────────────`);
+    console.log(`[publish] Template:     ${entry.templateId}`);
+    console.log(`[publish] Version:      ${entry.version}`);
+    console.log(`[publish] Tier:         ${entry.tier}`);
+    console.log(`[publish] Registry:     ${registryPath}`);
+    console.log(`[publish] Published at: ${entry.publishedAt}`);
+    console.log(`[publish] Duration:     ${formatDuration(elapsed)}`);
+  }
+
+  return entry;
+}
+
 async function cmdTemplates() {
   printHeader("TEMPLATES — Available Architecture Templates");
 
@@ -511,6 +576,7 @@ function printUsage() {
     propose <report.json>  Generate recommendation → ArchitectureSpec
     pipeline <path|url>    Run full pipeline (intake → analyze → propose)
     deliver <template-id>  Package + license + export a template
+    publish <id|file>      Publish envelope to local registry
     templates              List available architecture templates
     services               List deployed services (engine API)
     health                 Check engine health
@@ -552,6 +618,9 @@ async function main() {
         break;
       case "deliver":
         await cmdDeliver(target);
+        break;
+      case "publish":
+        await cmdPublish(target);
         break;
       case "templates":
         await cmdTemplates();
