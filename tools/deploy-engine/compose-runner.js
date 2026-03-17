@@ -1,38 +1,60 @@
-import { spawn } from "child_process"
 import getPort from "get-port"
+import { spawn } from "child_process"
+import fs from "fs"
+import path from "path"
 
-export async function runService(stack,svc){
+const REGISTRY = path.resolve("tools/deploy-engine/registry/services.json")
 
-  const port = await getPort({port:getPort.makeRange(8081,9000)})
+export async function runService(name,image,internalPort=80){
 
-  const name = `${stack}-${svc.name}-${port}`
+  const port = await getPort()
+
+  const containerName = `${name}-${port}`
+
+  const proc = spawn("docker",[
+    "run",
+    "-d",
+    "-p",
+    `${port}:${internalPort}`,
+    "--name",
+    containerName,
+    image
+  ])
+
+  let stderr = ""
+
+  proc.stderr.on("data",(d)=>{
+    stderr += d.toString()
+  })
 
   return new Promise((resolve,reject)=>{
 
-    const proc = spawn("docker",[
-      "run",
-      "-d",
-      "--name",name,
-      "-p",`${port}:${svc.port}`,
-      svc.image
-    ])
-
     proc.on("close",(code)=>{
 
-      if(code === 0){
-
-        resolve({
-          name,
-          port,
-          image:svc.image,
-          url:`http://localhost:${port}`
-        })
-
-      }else{
-
-        reject(new Error("docker run failed"))
-
+      if(code !== 0){
+        console.error("DOCKER ERROR:",stderr)
+        return reject(new Error(stderr))
       }
+
+      let registry = []
+
+      try{
+        registry = JSON.parse(fs.readFileSync(REGISTRY))
+      }catch{}
+
+      const service = {
+        name:containerName,
+        port,
+        url:`http://localhost:${port}`,
+        image,
+        created:new Date().toISOString()
+      }
+
+      registry.push(service)
+
+      fs.writeFileSync(REGISTRY,JSON.stringify(registry,null,2))
+
+      resolve(service)
 
     })
 
