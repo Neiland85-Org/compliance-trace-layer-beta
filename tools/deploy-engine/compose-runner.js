@@ -1,20 +1,41 @@
 import { spawn } from "child_process"
+import getPort from "get-port"
 
-export function runService(service){
+export async function runService(stack,svc){
 
-  const args = [
-    "run",
-    "-d",
-    "--name",
-    service.name,
-    "-p",
-    `${service.port}:${service.port}`,
-    service.image
-  ]
+  const port = await getPort({port:getPort.makeRange(8081,9000)})
 
-  const proc = spawn("docker",args)
+  const name = `${stack}-${svc.name}-${port}`
 
-  proc.stdout.on("data",d=>console.log(d.toString()))
-  proc.stderr.on("data",d=>console.error(d.toString()))
+  return new Promise((resolve,reject)=>{
+
+    const proc = spawn("docker",[
+      "run",
+      "-d",
+      "--name",name,
+      "-p",`${port}:${svc.port}`,
+      svc.image
+    ])
+
+    proc.on("close",(code)=>{
+
+      if(code === 0){
+
+        resolve({
+          name,
+          port,
+          image:svc.image,
+          url:`http://localhost:${port}`
+        })
+
+      }else{
+
+        reject(new Error("docker run failed"))
+
+      }
+
+    })
+
+  })
 
 }

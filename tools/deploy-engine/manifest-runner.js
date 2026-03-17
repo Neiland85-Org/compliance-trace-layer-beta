@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
-import { deployContainer } from "./deploy.js"
+
+import { runService } from "./compose-runner.js"
 
 const ARCH_ROOT = path.resolve("apps/console/src/architectures")
 
@@ -16,18 +17,16 @@ export async function deployManifest(manifestPath){
     fs.readFileSync(resolved)
   )
 
-  const services = []
+  const services=[]
 
   for(const svc of manifest.services){
 
-    const result = await deployContainer(
-      `${manifest.name}-${svc.name}`,
-      svc.image
-    )
+    const result = await runService(manifest.name,svc)
 
     services.push(result)
 
   }
 
   return services
+
 }
