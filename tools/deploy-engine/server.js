@@ -10,29 +10,12 @@ const app = express()
 
 const REGISTRY = path.resolve("tools/deploy-engine/registry/services.json")
 
-process.on("uncaughtException",(e)=>{
-  console.error("UNCAUGHT:",e)
-})
-
-process.on("unhandledRejection",(e)=>{
-  console.error("REJECTION:",e)
-})
-
-process.on("SIGTERM",()=>{
-  console.log("SIGTERM received but ignored")
-})
-
-process.on("SIGINT",()=>{
-  console.log("SIGINT received but ignored")
-})
-
 app.use(express.json())
 
 /*
 DEPLOY SINGLE CONTAINER
 */
-app.post("/deploy",async (req,res)=>{
-
+app.post("/deploy", async (req,res)=>{
   try{
 
     const { name,image } = req.body
@@ -45,71 +28,55 @@ app.post("/deploy",async (req,res)=>{
       service:result.url
     })
 
+  }catch(err){
+
+    console.error(err)
+
+    res.status(500).json({status:"deploy-failed"})
   }
-  catch(err){
-
-    console.error("deploy error:",err)
-
-    res.status(500).json({
-      status:"deploy-failed"
-    })
-
-  }
-
 })
 
 /*
-DEPLOY ARCHITECTURE MANIFEST
+DEPLOY STACK MANIFEST
 */
-app.post("/deploy-manifest",(req,res)=>{
-
-  const { path:manifestPath } = req.body
+app.post("/deploy-manifest", async (req,res)=>{
 
   try{
 
-    deployManifest(manifestPath)
+    const { path:manifestPath } = req.body
+
+    const result = await deployManifest(manifestPath)
 
     res.json({
-      status:"stack-started"
+      status:"stack-started",
+      services:result
     })
 
+  }catch(err){
+
+    console.error(err)
+
+    res.status(500).json({status:"manifest-error"})
   }
-  catch(err){
-
-    console.error("manifest error:",err)
-
-    res.status(500).json({
-      status:"manifest-error"
-    })
-
-  }
-
 })
 
 /*
 REMOVE SERVICE
 */
-app.delete("/service/:name",async(req,res)=>{
+app.delete("/service/:name", async (req,res)=>{
 
   try{
 
     await stopContainer(req.params.name)
 
-    res.json({
-      status:"removed"
-    })
+    res.json({status:"removed"})
 
+  }catch(err){
+
+    console.error(err)
+
+    res.status(500).json({status:"error"})
   }
-  catch(err){
-
-    console.error("remove error:",err)
-
-    res.status(500).json({
-      status:"error"
-    })
-
-  }
-
 })
 
 /*
@@ -123,13 +90,10 @@ app.get("/services",(req,res)=>{
 
     res.json(data)
 
-  }
-  catch{
+  }catch{
 
     res.json([])
-
   }
-
 })
 
 /*
