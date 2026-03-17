@@ -1,12 +1,33 @@
 import fs from "fs"
-import { runService } from "./compose-runner.js"
+import path from "path"
+import { deployContainer } from "./deploy.js"
 
-export function deployManifest(path){
+const ARCH_ROOT = path.resolve("apps/console/src/architectures")
 
-  const manifest = JSON.parse(fs.readFileSync(path))
+export async function deployManifest(manifestPath){
 
-  for(const service of manifest.services){
-    runService(service)
+  const resolved = path.resolve(manifestPath)
+
+  if(!resolved.startsWith(ARCH_ROOT)){
+    throw new Error("invalid manifest path")
   }
 
+  const manifest = JSON.parse(
+    fs.readFileSync(resolved)
+  )
+
+  const services = []
+
+  for(const svc of manifest.services){
+
+    const result = await deployContainer(
+      `${manifest.name}-${svc.name}`,
+      svc.image
+    )
+
+    services.push(result)
+
+  }
+
+  return services
 }
