@@ -2,28 +2,26 @@ name: CI
 
 on:
   push:
-    branches: [ main, refactor/product-core ]
+    branches: [ main, refactor/marketplace-foundation ]
   pull_request:
-    branches: [ main ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: 'npm'
+          node-version: 20
 
-      - name: Install root
+      - name: Install dependencies
         run: npm install
 
-      - name: Install frontend
-        run: npm install --workspace demo/console
-
-      - name: Build frontend
-        run: npm run build --workspace demo/console
+      - name: Build console
+        run: npm run build --workspace=apps/console
