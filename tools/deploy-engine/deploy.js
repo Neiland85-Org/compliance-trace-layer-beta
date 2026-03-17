@@ -1,12 +1,10 @@
-import { exec } from "child_process"
-import { promisify } from "util"
-import getPort from "get-port"
+import { spawn } from "child_process"
 import fs from "fs"
 import path from "path"
 
-const execAsync = promisify(exec)
-
 const REGISTRY = path.resolve("tools/deploy-engine/registry/services.json")
+
+let port = 8081
 
 function loadRegistry(){
   try{
@@ -17,33 +15,59 @@ function loadRegistry(){
 }
 
 function saveRegistry(data){
-  fs.writeFileSync(REGISTRY,JSON.stringify(data,null,2))
+  fs.writeFileSync(REGISTRY, JSON.stringify(data,null,2))
 }
 
-export async function deployContainer(name,image){
+export function deployContainer(name,image){
 
-  const assignedPort = await getPort({ port: getPort.makeRange(8081,9000) })
+  return new Promise((resolve,reject)=>{
 
-  const containerName = `${name}-${assignedPort}`
+    const assignedPort = port++
+    const containerName = `${name}-${assignedPort}`
 
-  const cmd = `docker run -d --name ${containerName} -p ${assignedPort}:80 ${image}`
+    const args = [
+      "run",
+      "-d",
+      "--name",
+      containerName,
+      "-p",
+      `${assignedPort}:80`,
+      image
+    ]
 
-  console.log("deploying:",cmd)
+    console.log("docker",args.join(" "))
 
-  await execAsync(cmd)
+    const proc = spawn("docker",args)
 
-  const service = {
-    name:containerName,
-    port:assignedPort,
-    url:`http://localhost:${assignedPort}`,
-    image,
-    created:new Date().toISOString()
-  }
+    let err=""
 
-  const registry = loadRegistry()
-  registry.push(service)
-  saveRegistry(registry)
+    proc.stderr.on("data",(d)=>{
+      err += d.toString()
+    })
 
-  return service
+    proc.on("close",(code)=>{
+
+      if(code !== 0){
+        console.error("deploy failed:",err)
+        return reject(err)
+      }
+
+      const service = {
+        name:containerName,
+        port:assignedPort,
+        url:`http://localhost:${assignedPort}`,
+        image,
+        created:new Date().toISOString()
+      }
+
+      const registry = loadRegistry()
+      registry.push(service)
+      saveRegistry(registry)
+
+      resolve(service)
+
+    })
+
+  })
 
 }
