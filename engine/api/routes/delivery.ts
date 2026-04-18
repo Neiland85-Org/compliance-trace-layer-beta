@@ -5,9 +5,9 @@
  * GET  /registry         — List published packages in local registry
  * GET  /registry/:id     — Pull a specific package from registry
  *
- * NOTE: These routes import from delivery/ at RUNTIME via dynamic import.
- * The engine itself does NOT statically depend on delivery/ — this preserves
- * the open-source boundary. If delivery/ is not present, these routes
+ * NOTE: These routes load the proprietary Delivery module at RUNTIME via dynamic import.
+ * The engine itself does NOT statically depend on the Delivery module — this preserves
+ * the open-source boundary. If the Delivery module is not present, these routes
  * return 501 Not Implemented.
  */
 
