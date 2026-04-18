@@ -1,0 +1,13 @@
+{
+  "name": "starter",
+  "description": "Single-instance development setup",
+  "values": {
+    "NODE_ENV": "development",
+    "DB_HOST": "localhost",
+    "DB_NAME": "compliance_trace_dev",
+    "DB_USER": "postgres",
+    "DB_PASSWORD": "devpassword",
+    "ALLOWED_ORIGINS": "http://localhost:5173,http://localhost:3000",
+    "LOG_LEVEL": "debug"
+  }
+}

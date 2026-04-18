@@ -48,7 +48,6 @@ const limiter = rateLimit({
 
 const app = express();
 
-<<<<<<< HEAD
 // Trust proxy in production for proper HTTPS detection behind reverse proxy
 if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
@@ -82,19 +81,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use(cors({ origin: allowedOrigins, credentials: true }));
-=======
-// Seguridad
-app.use(helmet());
-app.use(rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100 // límite de 100 peticiones por ventana
-}));
-
-app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173'],
-  credentials: true
-}));
->>>>>>> d678bff (WIP: guardar cambios locales)
 app.use(express.json());
 app.use("/api/", limiter);
 

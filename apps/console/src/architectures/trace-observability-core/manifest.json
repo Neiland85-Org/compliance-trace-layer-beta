@@ -1,0 +1,10 @@
+{
+  "id": "trace-observability-core",
+  "name": "Trace Observability Core",
+  "description": "Metrics and compliance monitoring pipeline",
+  "category": "Observability",
+  "stack": ["Metrics","Logs","Workers"],
+  "deploy": {
+    "type": "pipeline"
+  }
+}

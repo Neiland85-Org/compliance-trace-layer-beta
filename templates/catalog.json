@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1-0-0",
+  "templates": [
+    {
+      "templateId": "compliance-api",
+      "version": "1.0.0",
+      "name": "Trace Compliance API",
+      "category": "compliance",
+      "description": "GDPR cookie compliance backend with trace layer and PostgreSQL persistence"
+    },
+    {
+      "templateId": "observability-core",
+      "version": "1.0.0",
+      "name": "Trace Observability Core",
+      "category": "observability",
+      "description": "Metrics and compliance monitoring pipeline with structured logging"
+    },
+    {
+      "templateId": "audit-ledger",
+      "version": "1.0.0",
+      "name": "Trace Audit Ledger",
+      "category": "compliance",
+      "description": "Immutable audit log for compliance events with SHA-256 integrity proofs"
+    },
+    {
+      "templateId": "consent-service",
+      "version": "1.0.0",
+      "name": "Trace Consent Service",
+      "category": "compliance",
+      "description": "Cookie consent management service for regulatory compliance"
+    }
+  ]
+}

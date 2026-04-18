@@ -1,0 +1,15 @@
+{
+  "name":"test-stack",
+  "services":[
+    {
+      "name":"web",
+      "image":"nginx",
+      "port":80
+    },
+    {
+      "name":"web2",
+      "image":"nginx",
+      "port":80
+    }
+  ]
+}
