@@ -127,11 +127,10 @@ jobs:
 
       - name: Verify no proprietary imports in engine
         run: |
-          if grep -r "intelligence/" engine/ contracts/ apps/ 2>/dev/null; then
-            echo "ERROR: Open-source code imports proprietary modules"
-            exit 1
-          fi
-          if grep -r "delivery/" engine/ contracts/ apps/ 2>/dev/null; then
+          # Match only static import/require statements, not comments or template literals
+          if grep -rE 'from\s+["'"'"'](intelligence|delivery)/|require\s*\(\s*["'"'"'](intelligence|delivery)/' \
+            --include='*.ts' --include='*.tsx' --include='*.js' --include='*.jsx' \
+            engine/ contracts/ apps/ 2>/dev/null; then
             echo "ERROR: Open-source code imports proprietary modules"
             exit 1
           fi

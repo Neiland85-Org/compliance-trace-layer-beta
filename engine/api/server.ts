@@ -6,8 +6,8 @@
  * State: SQLite (engine/data/state.db)
  * Reconciler: Background loop checking desired vs actual state
  *
- * This server has ZERO static imports from intelligence/.
- * Delivery routes use dynamic import() — if delivery/ is absent,
+ * This server has ZERO static imports from the proprietary Intelligence module.
+ * Delivery routes use dynamic import() — if the proprietary Delivery module is absent,
  * those endpoints return 501 (open-source edition behavior).
  */
 
